@@ -27,7 +27,7 @@
                                 <VBox spacing="10">
                                     <children>
                                         <Label fx:id="userHelloText"/>
-                                        <Label fx:id="userEmailText"/>
+                                        <Label fx:id="userGreetText"/>
                                         <Label fx:id="userLastActionText"/>
                                         <Label fx:id="todayPlan" text="注销"/>
                                     </children>
@@ -88,7 +88,7 @@
                                                GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionAction"/>
 
                                         <Label prefWidth="Infinity" alignment="CENTER" GridPane.columnIndex="1"
-                                               GridPane.rowIndex="2">
+                                               GridPane.rowIndex="2" onMouseClicked="#handleSwitchToTransactionForDayAction">
                                             <graphic>
                                                 <ImageView fitHeight="30" preserveRatio="true">
                                                     <Image url="@../images/icon-baobiaomoban.png"/>
@@ -97,10 +97,10 @@
                                         </Label>
                                         <Label text="日度报表" styleClass="icon-text" prefWidth="Infinity"
                                                alignment="CENTER" GridPane.columnIndex="1"
-                                               GridPane.rowIndex="3"/>
+                                               GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionForDayAction"/>
 
                                         <Label prefWidth="Infinity" alignment="CENTER" GridPane.columnIndex="2"
-                                               GridPane.rowIndex="2">
+                                               GridPane.rowIndex="2" onMouseClicked="#handleSwitchToTransactionForMonthAction">
                                             <graphic>
                                                 <ImageView fitHeight="30" preserveRatio="true">
                                                     <Image url="@../images/icon-yewubaobiao.png"/>
@@ -109,10 +109,10 @@
                                         </Label>
                                         <Label text="月度报表" styleClass="icon-text" prefWidth="Infinity"
                                                alignment="CENTER" GridPane.columnIndex="2"
-                                               GridPane.rowIndex="3"/>
+                                               GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionForMonthAction"/>
 
                                         <Label prefWidth="Infinity" alignment="CENTER" GridPane.columnIndex="3"
-                                               GridPane.rowIndex="2">
+                                               GridPane.rowIndex="2" onMouseClicked="#handleSwitchToTransactionForYearAction">
                                             <graphic>
                                                 <ImageView fitHeight="30" preserveRatio="true">
                                                     <Image url="@../images/icon-yingshoubaobiao.png"/>
@@ -121,7 +121,7 @@
                                         </Label>
                                         <Label text="年度报表" styleClass="icon-text" prefWidth="Infinity"
                                                alignment="CENTER" GridPane.columnIndex="3"
-                                               GridPane.rowIndex="3"/>
+                                               GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionForYearAction"/>
                                         <!--第2行菜单结束-->
                                     </children>
                                 </GridPane>

@@ -46,7 +46,7 @@ public class HomeViewController implements Initializable {
      * 平台欢迎信息-邮箱
      */
     @FXML
-    private Label userEmailText;
+    private Label userGreetText;
 
     /**
      * 平台欢迎信息-上次操作明细
@@ -99,17 +99,15 @@ public class HomeViewController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         userLogo.setGraphic(new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/logo.png"),114,114,false,false)));
-        userHelloText.setText("晚上好！刘能凯");
-        userEmailText.setText("我的邮箱：saya@saya.ac.cn");
+        userHelloText.setText(DateUtils.getNowHourHello()+"好！刘能凯");
+        userGreetText.setText(DateUtils.getGreetText());
         userLastActionText.setText("最后一次操作：2020-04-10 22:39:14 四川成都");
         todayPlan.setText("复习JVM");
         // 设置日历
         calendarMonth.setText(DateUtils.getCurrentMonth());
         calendarDay.setText(DateUtils.getCurrentDay());
-        // 设置页面名
-        pageName.setText("主页");
         // 页面默认打开主页
-        pageSwitch("page/general.fxml");
+        pageSwitch("page/general.fxml","主页");
     }
 
     /**
@@ -117,7 +115,7 @@ public class HomeViewController implements Initializable {
      * @return
      */
     public void handleSwitchToGeneralAction(MouseEvent event){
-        pageSwitch("page/general.fxml");
+        pageSwitch("page/general.fxml","主页");
     }
 
     /**
@@ -125,7 +123,7 @@ public class HomeViewController implements Initializable {
      * @return
      */
     public void handleSwitchToTransactionAction(MouseEvent event){
-        pageSwitch("page/transaction.fxml");
+        pageSwitch("page/transaction.fxml","财务流水");
     }
 
     /**
@@ -133,19 +131,42 @@ public class HomeViewController implements Initializable {
      * @return
      */
     public void handleSwitchToDeclareAction(MouseEvent event){
-        pageSwitch("page/declare.fxml");
+        pageSwitch("page/declare.fxml","财务申报");
     }
 
+    /**
+     * 跳转到日度报表
+     * @return
+     */
+    public void handleSwitchToTransactionForDayAction(MouseEvent event){
+        pageSwitch("page/transactionForDay.fxml","日度报表");
+    }
+
+    /**
+     * 跳转到月度报表
+     * @return
+     */
+    public void handleSwitchToTransactionForMonthAction(MouseEvent event){
+        pageSwitch("page/transactionForMonth.fxml","月度报表");
+    }
+
+    /**
+     * 跳转到年度报表
+     * @return
+     */
+    public void handleSwitchToTransactionForYearAction(MouseEvent event){
+        pageSwitch("page/transactionForYear.fxml","年度报表");
+    }
 
     /**
      * @Title 页面场景切换
-     * @Params  [pagePath]
+     * @Params  [pagePath, pageTielt]
      * @Return  void
      * @Author  saya.ac.cn-刘能凯
-     * @Date  2020-04-11
+     * @Date  2020-04-12
      * @Description
      */
-    private void pageSwitch(String pagePath){
+    private void pageSwitch(String pagePath,String pageTielt){
         if (null != thisPane && thisPane.equals(pagePath)){
             // 如果当前页面已经打开，则不执行任何操作
             return;
@@ -162,6 +183,8 @@ public class HomeViewController implements Initializable {
                 childPane.getChildren().clear();
             }
             childPane.getChildren().add(pane);
+            // 设置页面名
+            pageName.setText(pageTielt);
             // 保存当前页面路径
             thisPane = pagePath;
         } catch (IOException e) {

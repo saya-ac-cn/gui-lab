@@ -20,7 +20,7 @@
     -fx-font-weight: bolder;
 }
 
-#userEmailText, #userLastActionText, #todayPlan {
+#userGreetText, #userLastActionText, #todayPlan {
     -fx-font-size: 14;
     -fx-font-weight: bolder;
 }

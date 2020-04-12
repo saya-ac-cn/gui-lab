@@ -145,6 +145,55 @@ public class DateUtils {
         return firstDay.format(DateUtils.dateFormat);
     }
 
+    /**
+     * 根据当前小时，返回时段
+     * @return
+     */
+    public static String getNowHourHello() {
+        LocalDateTime time = LocalDateTime.now();
+        int hour = time.getHour();
+        if (hour >= 0 && hour <= 6) {
+            return "凌晨";
+        }
+        if (hour > 6 && hour <= 12) {
+            return "上午";
+        }
+        if (hour > 12 && hour <= 13) {
+            return "中午";
+        }
+        if (hour > 13 && hour <= 18) {
+            return "下午";
+        }
+        if (hour > 18 && hour <= 24) {
+            return "晚上";
+        }
+        return "您好";
+    }
+
+    /**
+     * 根据小时，得到问候词
+     * @return
+     */
+    public static String getGreetText(){
+        LocalDateTime time = LocalDateTime.now();
+        int hour = time.getHour();
+        String greetText = "好久不见，甚是想念，记得爱护自己！";
+        if(hour >= 0 && hour < 7){
+            greetText = "天还没亮，夜猫子，要注意身体哦！";
+        }else if(hour>=7 && hour<12){
+            greetText = "上午好！又是元气充满的一天，奥利给！";
+        }else if(hour >= 12 && hour < 14){
+            greetText = "中午好！吃完饭记得午休哦！";
+        }else if(hour >= 14 && hour < 18){
+            greetText = "下午茶的时间到了，休息一下吧！";
+        }else if(hour >= 18 && hour < 22){
+            greetText = "晚上到了，多陪陪家人吧！";
+        }else if(hour >= 22 && hour < 24){
+            greetText = "很晚了哦，注意休息呀！";
+        }
+        return greetText;
+    }
+
     public static void main(String[] args) {
         String datetime = DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
         System.out.println("now-date:"+datetime);

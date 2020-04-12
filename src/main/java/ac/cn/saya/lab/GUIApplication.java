@@ -1,13 +1,13 @@
 package ac.cn.saya.lab;
 
 import ac.cn.saya.lab.controller.HomeViewController;
-import ac.cn.saya.lab.controller.TableViewController;
 import ac.cn.saya.lab.controller.LoginViewController;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
@@ -15,7 +15,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * @Title: GUIApplication
@@ -56,8 +55,10 @@ public class GUIApplication extends Application {
             //showTableView();
             // 全局名字统一
             stage.setTitle("Home");
-            //  设置窗口风格，去掉窗口修饰 TRANSPARENT——透明背景，没有操作系统平台装饰
+            // 设置窗口风格，去掉窗口修饰 TRANSPARENT——透明背景，没有操作系统平台装饰
             stage.initStyle(StageStyle.TRANSPARENT);
+            // logo
+            stage.getIcons().add(new Image(GUIApplication.class.getResourceAsStream("/images/system.png")));
             primaryStage.show();
             // 手动设置Stage的位置，注意在show()方法后面
             Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
@@ -73,8 +74,6 @@ public class GUIApplication extends Application {
      */
     public void showLoginView() {
         try {
-            //stage.setTitle("财政金融申报平台");
-            //stage.getIcons().add(new Image("file:images/login.png"));
             LoginViewController lgController = (LoginViewController)replaceSceneContent("page/login.fxml",false);
             lgController.setMainApp(this);
         }catch(Exception e) {
@@ -94,18 +93,6 @@ public class GUIApplication extends Application {
         }
     }
 
-    /**
-     *	显示表格界面
-     */
-    public void showTableView() {
-        try {
-            //stage.setTitle("表格");
-            TableViewController rpController = (TableViewController)replaceSceneContent("page/table.fxml",true);
-            rpController.setMainApp(this);
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      *	显示指定的视图

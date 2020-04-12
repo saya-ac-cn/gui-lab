@@ -1,5 +1,7 @@
 package ac.cn.saya.lab.controller;
 
+import ac.cn.saya.lab.GUIApplication;
+import ac.cn.saya.lab.assemb.AdvisorPagingAndDate;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
 import ac.cn.saya.lab.entity.UserEntity;
 import ac.cn.saya.lab.tools.DateUtils;
@@ -14,7 +16,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
@@ -31,7 +36,7 @@ import java.util.ResourceBundle;
  * @Description: 财务流水报表
  */
 
-public class TransactionViewController extends PagingTools implements Initializable {
+public class TransactionViewController extends AdvisorPagingAndDate implements Initializable {
 
     /**
      * 表格
@@ -68,23 +73,14 @@ public class TransactionViewController extends PagingTools implements Initializa
     @FXML
     public TableColumn<UserEntity, String> createTime;
 
+    @FXML
+    private TableColumn<UserEntity, String> operateCol;
+
     /**
      * 交易类别
      */
     @FXML
     public ChoiceBox<TransactionTypeEntity> dealType;
-
-    /**
-     * 开始时间
-     */
-    @FXML
-    private DatePicker beginTime;
-
-    /**
-     * 结束时间
-     */
-    @FXML
-    private DatePicker endTime;
 
     @FXML
     public Button search;
@@ -106,78 +102,6 @@ public class TransactionViewController extends PagingTools implements Initializa
         initDatePicker();
     }
 
-
-    /**
-     * 初始化时间选择器
-     */
-    private void initDatePicker(){
-        // 设置开始时间
-        beginTime.setValue(LocalDate.now());
-        final Callback<DatePicker, DateCell> endDatePickerFactory =
-                new Callback<DatePicker, DateCell>() {
-                    @Override
-                    public DateCell call(final DatePicker datePicker) {
-                        return new DateCell() {
-                            @Override
-                            public void updateItem(LocalDate item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (item.isBefore(
-                                        beginTime.getValue().plusDays(1))
-                                ) {
-                                    setDisable(true);
-                                    setStyle("-fx-background-color: #FFCCCC;");
-                                }
-                            }
-                        };
-                    }
-                };
-        // 为结束时间绑定事件，使之不能早于开始时间
-        endTime.setDayCellFactory(endDatePickerFactory);
-        // 设置结束时间为开始时间的下一天
-        endTime.setValue(beginTime.getValue().plusDays(1));
-        final Callback<DatePicker, DateCell> firstDatePickerFactory =
-                new Callback<DatePicker, DateCell>() {
-                    @Override
-                    public DateCell call(final DatePicker datePicker) {
-                        return new DateCell() {
-                            @Override
-                            public void updateItem(LocalDate item, boolean empty) {
-                                super.updateItem(item, empty);
-                                if (item.isAfter(
-                                        endTime.getValue().plusDays(1))
-                                ) {
-                                    setDisable(true);
-                                    setStyle("-fx-background-color: #FFCCCC;");
-                                }
-                            }
-                        };
-                    }
-                };
-        // 为开始时间绑定事件，使之不能晚于结束时间
-        beginTime.setDayCellFactory(firstDatePickerFactory);
-        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
-            @Override
-            public String toString(LocalDate date) {
-                if (date != null) {
-                    return (DateUtils.dateFormat).format(date);
-                } else {
-                    return "";
-                }
-            }
-
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && !string.isEmpty()) {
-                    return LocalDate.parse(string, DateUtils.dateFormat);
-                } else {
-                    return null;
-                }
-            }
-        };
-        beginTime.setConverter(converter);
-        endTime.setConverter(converter);
-    }
-
     /**
      * 渲染表格
      *
@@ -190,6 +114,48 @@ public class TransactionViewController extends PagingTools implements Initializa
         data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
         data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
         dataTableView.setItems(data);
+        operateCol.setCellFactory((col) -> {
+            TableCell<UserEntity, String> cell = new TableCell<UserEntity, String>() {
+
+                @Override
+                public void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    this.setText(null);
+                    this.setGraphic(null);
+
+                    if (!empty) {
+                        HBox box = new HBox();
+                        box.setSpacing(10);
+                        // 详情按钮
+                        Label moreLabel = new Label();
+                        ImageView moreIcon = new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/gengduo.png"),14,14,true,false));
+                        moreLabel.setGraphic(moreIcon);
+                        // 编辑按钮
+                        Label editLabel = new Label();
+                        ImageView editIcon = new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/bianji.png"),14,14,true,false));
+                        editLabel.setGraphic(editIcon);
+                        // 删除按钮
+                        Label deleteLabel = new Label();
+                        ImageView deleteIcon = new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/icon-delete.png"),14,14,true,false));
+                        deleteLabel.setGraphic(deleteIcon);
+
+                        box.getChildren().add(moreLabel);
+                        box.getChildren().add(editLabel);
+                        box.getChildren().add(deleteLabel);
+                        this.setGraphic(box);
+                        moreLabel.setOnMouseClicked(me -> {
+                            new AlertBox().display("title", "message");
+                        });
+                        deleteLabel.setOnMouseClicked(me -> {
+                            UserEntity user = this.getTableView().getItems().get(this.getIndex());
+                            System.out.println("删除 " + user.getAccount() + " 的记录");
+                        });
+                    }
+                }
+
+            };
+            return cell;
+        });
         // 请求成功后更新当前页码 和 总页数
         pageIndex = pageNum;
         pageCount = 10;
