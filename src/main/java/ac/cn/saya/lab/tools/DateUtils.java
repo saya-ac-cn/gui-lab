@@ -181,7 +181,7 @@ public class DateUtils {
         if(hour >= 0 && hour < 7){
             greetText = "天还没亮，夜猫子，要注意身体哦！";
         }else if(hour>=7 && hour<12){
-            greetText = "上午好！又是元气充满的一天，奥利给！";
+            greetText = "上午好！又是元气满满的一天，奥利给！";
         }else if(hour >= 12 && hour < 14){
             greetText = "中午好！吃完饭记得午休哦！";
         }else if(hour >= 14 && hour < 18){

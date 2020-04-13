@@ -6,7 +6,8 @@
    * @Date: 2020-04-11 19:15
    * @Description: 
    */
-.searchButton,.refreshButton,.outButton {
+/*通用的按钮样式设置*/
+.searchButton,.refreshButton,.outButton,.removeButton,.addButton,.saveButton {
     /*无边框*/
     -fx-border-style: none;
     /*鼠标样式*/
@@ -41,6 +42,7 @@
     -fx-background-color: #FFCCCC;
 }
 
+/*通用的日期选择*/
 .date-picker {
     -fx-pref-width: 120;
     -fx-background-color: #f1fafa;
@@ -57,6 +59,15 @@
 }
 
 .date-picker .date-cell{
+    -fx-background-color: #f1fafa;
+    -fx-opacity: 0.65;
+    -fx-text-fill: #3861F4;
+}
+
+/*通用文本框样式*/
+.general-input{
+    -fx-font-size: 14;
+    -fx-font-weight: bolder;
     -fx-background-color: #f1fafa;
     -fx-opacity: 0.65;
     -fx-text-fill: #3861F4;

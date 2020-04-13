@@ -106,25 +106,15 @@ public class GUIApplication extends Application {
         }catch(IOException e) {
             e.printStackTrace();
         }
-        ap.setOnMousePressed(new EventHandler<MouseEvent>() {
-            /*
-             * 鼠标按下时，记下相对于 root左上角(0,0) 的 x, y坐标, 也就是x偏移量 = x - 0, y偏移量 = y - 0
-             */
-            @Override
-            public void handle(MouseEvent event) {
-                xOffset = event.getSceneX();
-                yOffset = event.getSceneY();
-            }
+        ap.setOnMousePressed(event -> {
+            // 鼠标按下时，记下相对于 root左上角(0,0) 的 x, y坐标, 也就是x偏移量 = x - 0, y偏移量 = y - 0
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
         });
-        ap.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            /*
-             * 根据偏移量设置primaryStage新的位置
-             */
-            @Override
-            public void handle(MouseEvent event) {
-                stage.setX(event.getScreenX() - xOffset);
-                stage.setY(event.getScreenY() - yOffset);
-            }
+        ap.setOnMouseDragged(event -> {
+            // 根据偏移量设置primaryStage新的位置
+            stage.setX(event.getScreenX() - xOffset);
+            stage.setY(event.getScreenY() - yOffset);
         });
         scene = new Scene(ap);
         stage.setScene(scene);

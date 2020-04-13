@@ -18,15 +18,16 @@
 
 /*设置表格头高度*/
 .table-view > .column-header-background{
-    -fx-pref-height: 25;
+    -fx-pref-height: 34;
     -fx-background-color: none;
 }
 
 /*设置每一列内容居中，每一行高度*/
 .table-row-cell{
-    -fx-cell-size: 25px;
+    -fx-cell-size: 32px;
     -fx-alignment: center;
     -fx-background-color: none;
+    -fx-font-size: 14;
 }
 
 #dataTableView{

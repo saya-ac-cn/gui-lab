@@ -1,5 +1,6 @@
 package ac.cn.saya.lab.tools;
 
+import ac.cn.saya.lab.entity.DealDirection;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
 
 import java.util.ArrayList;
@@ -21,6 +22,13 @@ public class SingValueTools {
         list.add(new TransactionTypeEntity(0,"支付宝"));
         list.add(new TransactionTypeEntity(2,"微信"));
         list.add(new TransactionTypeEntity(3,"信用卡"));
+        return list;
+    }
+
+    public static List<DealDirection> getDealDirection(){
+        List<DealDirection> list = new ArrayList<>();
+        list.add(new DealDirection(1,"存入"));
+        list.add(new DealDirection(2,"取出"));
         return list;
     }
 

@@ -19,11 +19,29 @@ public class StringUtils {
                     return false;
                 }
             }
-
             return true;
         } else {
             return true;
         }
+    }
+
+    /**
+     * 提取按钮字符串中的数字
+     * @param str
+     * @return
+     */
+    public static int getButtonIndex(String str){
+        int index;
+        if (isBlank(str)){
+            return -1;
+        }
+        try {
+            String[] line = str.split(" ");
+            index = Integer.parseInt(line[1]);
+        } catch (NumberFormatException e) {
+            index = -1;
+        }
+        return index;
     }
 
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="ac.cn.saya.lab.control.EditTransactionInfoControl"
+            prefHeight="480.0" prefWidth="720.0" style="-fx-background-color: none" stylesheets="@../css/tableview.css,@../css/form.css">
+    <children>
+        <BorderPane AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="0"
+                    AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10"  style="-fx-background-color: none" prefWidth="Infinity" prefHeight="Infinity">
+            <top>
+                <TextField fx:id="addDescField" styleClass="general-input" prefWidth="240"/>
+            </top>
+             <center>
+                 <Label text="1"/>
+             </center>
+            <bottom>
+                <HBox spacing="16" alignment="CENTER_RIGHT">
+                    <Button fx:id="closeButton" styleClass="removeButton" onMouseClicked="#handleClosePageAction" text="取消">
+                        <graphic>
+                            <ImageView fitHeight="20" preserveRatio="true">
+                                <Image url="@../images/icon-delete.png"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="submitButton" styleClass="saveButton" text="提交">
+                        <graphic>
+                            <ImageView fitHeight="20" preserveRatio="true">
+                                <Image url="@../images/icon-submit.png"/>
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </HBox>
+            </bottom>
+        </BorderPane>
+    </children>
+</AnchorPane>
