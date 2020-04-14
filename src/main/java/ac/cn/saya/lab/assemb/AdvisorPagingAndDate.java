@@ -1,5 +1,6 @@
 package ac.cn.saya.lab.assemb;
 
+import ac.cn.saya.lab.tools.DateConverter;
 import ac.cn.saya.lab.tools.DatePickerTools;
 import ac.cn.saya.lab.tools.DateUtils;
 import ac.cn.saya.lab.tools.PagingTools;
@@ -83,25 +84,7 @@ public class AdvisorPagingAndDate extends PagingTools {
                 };
         // 为开始时间绑定事件，使之不能晚于结束时间
         beginTime.setDayCellFactory(firstDatePickerFactory);
-        StringConverter<LocalDate> converter = new StringConverter<LocalDate>() {
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && (string=string.trim()).length()==10 && !string.isEmpty()) {
-                    return LocalDate.parse(string, DateUtils.dateFormat);
-                } else {
-                    return LocalDate.now();
-                }
-            }
-            @Override
-            public String toString(LocalDate date) {
-                if (date != null) {
-                    return (DateUtils.dateFormat).format(date);
-                } else {
-                    return String.valueOf(LocalDate.now());
-                }
-            }
-
-        };
+        StringConverter<LocalDate> converter = new DateConverter();
         beginTime.setConverter(converter);
         endTime.setConverter(converter);
     }

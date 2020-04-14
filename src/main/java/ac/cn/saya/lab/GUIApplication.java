@@ -50,9 +50,8 @@ public class GUIApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         try {
             stage  = primaryStage;
-            //showLoginView();
-            showHomeView();
-            //showTableView();
+            showLoginView();
+            //showHomeView();
             // 全局名字统一
             stage.setTitle("Home");
             // 设置窗口风格，去掉窗口修饰 TRANSPARENT——透明背景，没有操作系统平台装饰

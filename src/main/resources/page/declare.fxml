@@ -11,7 +11,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/tableview.css,@../css/form.css"
+            xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/form.css"
             fx:controller="ac.cn.saya.lab.controller.DeclareViewController">
     <children>
         <BorderPane AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10"

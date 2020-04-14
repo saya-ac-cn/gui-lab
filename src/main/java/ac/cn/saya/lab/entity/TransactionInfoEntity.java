@@ -48,4 +48,51 @@ public class TransactionInfoEntity implements Serializable {
         this.currencyNumber = currencyNumber;
         this.currencyDetails = currencyDetails;
     }
+
+    public TransactionInfoEntity(Integer id, Integer flog, Double currencyNumber, String currencyDetails) {
+        this.id = id;
+        this.flog = flog;
+        this.currencyNumber = currencyNumber;
+        this.currencyDetails = currencyDetails;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getTradeId() {
+        return tradeId;
+    }
+
+    public void setTradeId(Integer tradeId) {
+        this.tradeId = tradeId;
+    }
+
+    public Integer getFlog() {
+        return flog;
+    }
+
+    public void setFlog(Integer flog) {
+        this.flog = flog;
+    }
+
+    public Double getCurrencyNumber() {
+        return currencyNumber;
+    }
+
+    public void setCurrencyNumber(Double currencyNumber) {
+        this.currencyNumber = currencyNumber;
+    }
+
+    public String getCurrencyDetails() {
+        return currencyDetails;
+    }
+
+    public void setCurrencyDetails(String currencyDetails) {
+        this.currencyDetails = currencyDetails;
+    }
 }

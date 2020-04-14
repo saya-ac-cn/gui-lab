@@ -1,10 +1,10 @@
 package ac.cn.saya.lab.tools;
 
 import ac.cn.saya.lab.GUIApplication;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
@@ -28,17 +28,67 @@ import javafx.stage.StageStyle;
 
 public class NoticeUtils {
 
-    private static Alert alert;
+    //弹出一个确认对话框
+    public static void confirm(Stage stage,String title, String message, EventHandler confirmEvent){
+        //Stage stage = new Stage();
+        stage.setWidth(400);
+        stage.setHeight(160);
+        stage.setTitle(title);
+        stage.getIcons().add(new Image(GUIApplication.class.getResourceAsStream("/images/system.png")));
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.initStyle(StageStyle.TRANSPARENT);
 
-    //弹出一个信息对话框
-    public static void _show(Alert.AlertType type,String title, String mmessage){
-        alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(mmessage);
-        alert.showAndWait();
+        BorderPane pane = new BorderPane();
+        pane.setStyle("-fx-background:transparent;");
+
+        // 绘制标题
+        Label titleLeble = new Label(title);
+        titleLeble.setPadding(new Insets(10,0,0,10));
+        titleLeble.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD,16));
+        titleLeble.setTextFill(Paint.valueOf("#467cfd"));
+
+        // 绘制正文
+        Label contentLeble = new Label(message);
+        contentLeble.setFont(Font.font(14));
+        contentLeble.setTextFill(Paint.valueOf("#467cfd"));
+
+        // 绘制关闭按钮
+        Label closeButton = new Label("关闭");
+        closeButton.setOnMouseClicked(e -> stage.close());
+        closeButton.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD,14));
+        closeButton.setTextFill(Paint.valueOf("#467cfd"));
+        closeButton.setBackground(Background.EMPTY);
+        closeButton.setPadding(new Insets(0,0,8,0));
+
+        Label submitButton = new Label("确定");
+        submitButton.setOnMouseClicked(confirmEvent);
+        submitButton.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD,14));
+        submitButton.setTextFill(Paint.valueOf("#467cfd"));
+        submitButton.setBackground(Background.EMPTY);
+        submitButton.setPadding(new Insets(0,10,8,0));
+
+        HBox box = new HBox();
+        box.setSpacing(10);
+        box.getChildren().add(closeButton);
+        box.getChildren().add(submitButton);
+        box.setAlignment(Pos.CENTER_RIGHT);
+
+        pane.setTop(titleLeble);
+        pane.setCenter(contentLeble);
+        pane.setBottom(box);
+
+        Scene scene = new Scene(pane);
+        stage.setScene(scene);
+        // 设置背景透明
+        scene.setFill(Paint.valueOf("rgba(241,250,250,0.65)"));
+        stage.show();
     }
 
+    /**
+     * 得到一个消息提示框
+     * @param title
+     * @param message
+     */
     public static void show(String title , String message){
         Stage stage = new Stage();
         stage.setTitle(title);
@@ -54,20 +104,20 @@ public class NoticeUtils {
         // 绘制标题
         Label titleLeble = new Label(title);
         titleLeble.setPadding(new Insets(10,0,0,10));
-        titleLeble.setTextFill(Paint.valueOf("#3861F4"));
+        titleLeble.setTextFill(Paint.valueOf("#467cfd"));
         titleLeble.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD,16));
 
 
         // 绘制正文
         Label contentLeble = new Label(message);
-        contentLeble.setTextFill(Paint.valueOf("#3861F4"));
+        contentLeble.setTextFill(Paint.valueOf("#467cfd"));
         contentLeble.setFont(Font.font(14));
 
         // 绘制关闭按钮
         Label closeButton = new Label("关闭");
         closeButton.setOnMouseClicked(e -> stage.close());
         closeButton.setFont(Font.font("Microsoft YaHei", FontWeight.BOLD,14));
-        closeButton.setTextFill(Paint.valueOf("#3861F4"));
+        closeButton.setTextFill(Paint.valueOf("#467cfd"));
         closeButton.setBackground(Background.EMPTY);
         closeButton.setPadding(new Insets(0,10,8,0));
         HBox box = new HBox(closeButton);

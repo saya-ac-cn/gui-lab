@@ -27,12 +27,8 @@ import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
-import org.apache.http.NameValuePair;
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.ParseException;
+import com.alibaba.fastjson.JSON;
+import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -52,6 +48,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -168,6 +165,7 @@ public class HttpRequestUtils {
                         build();
         // 配置超时回调机制
         HttpRequestRetryHandler retryHandler = new HttpRequestRetryHandler() {
+            @Override
             public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
                 if (executionCount >= 3) {// 如果已经重试了3次，就放弃
                     return false;
@@ -321,6 +319,9 @@ public class HttpRequestUtils {
     public static String httpPost(String url, JSONObject headers, JSONObject params, Integer timeOut, boolean isStream, HttpClientContext clientContext) throws UnsupportedEncodingException {
         // 创建post请求
         HttpPost httpPost = new HttpPost(url);
+        //2.1设置请求头 发送的是json数据格式
+        httpPost.setHeader("Content-type", "application/json;charset=utf-8");
+        httpPost.setHeader("Connection", "Close");
         // 添加请求头信息
         if (null != headers) {
             for (Map.Entry<String, Object> entry : headers.entrySet()) {
@@ -329,7 +330,12 @@ public class HttpRequestUtils {
         }
         // 添加请求参数信息
         if (null != params) {
-            httpPost.setEntity(new UrlEncodedFormEntity(covertParams2NVPS(params), ENCODING));
+            StringEntity entity = new StringEntity(JSON.toJSONString(params), ENCODING);
+            entity.setContentEncoding("UTF-8");  //设置编码格式
+            // 发送Json格式的数据请求
+            entity.setContentType("application/json");
+            //把请求消息实体塞进去
+            httpPost.setEntity(entity);
         }
         return getResult(httpPost, timeOut, isStream, clientContext);
 
@@ -464,6 +470,7 @@ public class HttpRequestUtils {
         // 响应结果
         StringBuilder sb = null;
         CloseableHttpResponse response = null;
+        httpRequest.setHeader("Content-Type","application/json;charset=utf-8");
         try {
             // 获取连接客户端
             CloseableHttpClient httpClient = getHttpClient(timeOut);

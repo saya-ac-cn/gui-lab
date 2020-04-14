@@ -74,7 +74,7 @@
                 </GridPane>
             </center>
             <bottom>
-                <Label fx:id="errorInfoLabel" prefWidth="200.0" textFill="#5b317d"
+                <Label fx:id="errorInfoLabel" prefWidth="200.0" alignment="CENTER" textFill="#5b317d"
                        wrapText="true" BorderPane.alignment="CENTER">
                     <BorderPane.margin>
                         <Insets bottom="15.0" left="20.0" right="20.0"/>

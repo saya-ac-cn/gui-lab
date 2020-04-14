@@ -8,22 +8,84 @@
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+<?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ac.cn.saya.lab.control.EditTransactionInfoControl"
-            prefHeight="480.0" prefWidth="720.0" style="-fx-background-color: none" stylesheets="@../css/tableview.css,@../css/form.css">
+            prefHeight="480.0" prefWidth="720.0" style="-fx-background-color: none"
+            stylesheets="@../css/mini-table.css,@../css/form.css">
     <children>
-        <BorderPane AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="0"
-                    AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10"  style="-fx-background-color: none" prefWidth="Infinity" prefHeight="Infinity">
+        <BorderPane AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10"
+                    AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" style="-fx-background-color: none"
+                    prefWidth="Infinity" prefHeight="Infinity">
             <top>
-                <TextField fx:id="addDescField" styleClass="general-input" prefWidth="240"/>
+                <Label text="修改流水明细"
+                       style="-fx-text-fill: #467cfd;-fx-font-family: 'Microsoft YaHei UI';-fx-font-size: 16;-fx-font-weight: bolder">
+                </Label>
             </top>
-             <center>
-                 <Label text="1"/>
-             </center>
+            <center>
+                <BorderPane>
+                    <BorderPane.margin>
+                        <Insets top="10" bottom="10"/>
+                    </BorderPane.margin>
+                    <top>
+                        <HBox spacing="16" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="出入类型"/>
+                                <ChoiceBox fx:id="addDealDirection" styleClass="choice-box"/>
+                                <Label text="金额"/>
+                                <TextField fx:id="addChargeField" styleClass="general-input" prefWidth="100"/>
+                                <Label text="详情"/>
+                                <TextField fx:id="addDescField" styleClass="general-input" prefWidth="230"/>
+                                <Button styleClass="addButton" text="加入">
+                                    <graphic>
+                                        <ImageView fitHeight="20" preserveRatio="true">
+                                            <Image url="@../images/icon-add.png"/>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </top>
+                    <center>
+                        <!--第2行-数据表格-->
+                        <TableView fx:id="dataTableView">
+                            <columns>
+                                <TableColumn fx:id="flog" prefWidth="75.0" text="流向"/>
+                                <TableColumn fx:id="currencyNumber" prefWidth="75.0" text="金额"/>
+                                <TableColumn fx:id="currencyDetails" prefWidth="75.0" text="详情"/>
+                                <TableColumn fx:id="operateCol" prefWidth="75.0" text="操作"/>
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                            </columnResizePolicy>
+                        </TableView>
+                    </center>
+                    <bottom>
+                        <HBox spacing="16" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="出入类型"/>
+                                <ChoiceBox fx:id="editDealDirection" styleClass="choice-box"/>
+                                <Label text="金额"/>
+                                <TextField fx:id="editChargeField" styleClass="general-input" prefWidth="100"/>
+                                <Label text="详情"/>
+                                <TextField fx:id="editDescField" styleClass="general-input" prefWidth="230"/>
+                                <Button fx:id="editButton" styleClass="editButton" text="修改">
+                                    <graphic>
+                                        <ImageView fitHeight="20" preserveRatio="true">
+                                            <Image url="@../images/bianji.png"/>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </bottom>
+                </BorderPane>
+            </center>
             <bottom>
                 <HBox spacing="16" alignment="CENTER_RIGHT">
-                    <Button fx:id="closeButton" styleClass="removeButton" onMouseClicked="#handleClosePageAction" text="取消">
+                    <Button fx:id="closeButton" styleClass="removeButton" onMouseClicked="#handleClosePageAction"
+                            text="取消">
                         <graphic>
                             <ImageView fitHeight="20" preserveRatio="true">
                                 <Image url="@../images/icon-delete.png"/>

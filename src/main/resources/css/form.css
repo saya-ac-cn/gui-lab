@@ -7,7 +7,7 @@
    * @Description: 
    */
 /*通用的按钮样式设置*/
-.searchButton,.refreshButton,.outButton,.removeButton,.addButton,.saveButton {
+.searchButton,.refreshButton,.outButton,.removeButton,.addButton,.saveButton,.editButton {
     /*无边框*/
     -fx-border-style: none;
     /*鼠标样式*/

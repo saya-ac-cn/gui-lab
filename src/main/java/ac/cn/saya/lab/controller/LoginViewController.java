@@ -2,13 +2,10 @@ package ac.cn.saya.lab.controller;
 
 import ac.cn.saya.lab.GUIApplication;
 import ac.cn.saya.lab.api.RequestUrl;
-import ac.cn.saya.lab.tools.NoticeUtils;
 import ac.cn.saya.lab.tools.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -72,7 +69,11 @@ public class LoginViewController implements Initializable {
         if (StringUtils.isBlank( userNameField.getText()) || StringUtils.isBlank(passwordField.getText())){
             errorInfoLabel.setText("用户名或密码不能为空");
         }else {
-            if ("saya".equals(userNameField.getText()) && "111111".equals(passwordField.getText())){
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user",userNameField.getText());
+            jsonObject.put("password",passwordField.getText());
+            JSONObject result = RequestUrl.login(jsonObject);
+            if (RequestUrl.checkSuccess(result) && result.getInteger("code") == 0){
                 //显示主界面
                 mainApp.showHomeView();
             }else {
@@ -80,18 +81,6 @@ public class LoginViewController implements Initializable {
                 userNameField.setText(null);
                 passwordField.setText(null);
             }
-//            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("account",userNameField.getText());
-//            jsonObject.put("password",passwordField.getText());
-//            JSONObject result = RequestUrl.login(jsonObject);
-//            if (RequestUrl.checkSuccess(result) && result.getInteger("resultCode") == 0){
-//                //显示主界面
-//                mainApp.showHomeView();
-//            }else {
-//                errorInfoLabel.setText(result.getString("msg"));
-//                userNameField.setText(null);
-//                passwordField.setText(null);
-//            }
         }
     }
 

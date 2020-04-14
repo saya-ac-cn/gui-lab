@@ -18,13 +18,15 @@ import java.io.UnsupportedEncodingException;
 
 public class RequestUrl {
 
+    private static final String prefixUrh= "http://127.0.0.1:8080";
+
     /**
      * 检查请求是否成功
      * @param parmer
      * @return
      */
     public static boolean checkSuccess(JSONObject parmer){
-        if (null == parmer || StringUtils.isBlank(parmer.getString("resultCode"))){
+        if (null == parmer || StringUtils.isBlank(parmer.getString("code"))){
             return false;
         }
         return true;
@@ -38,7 +40,7 @@ public class RequestUrl {
     public static JSONObject login(JSONObject parmar){
         JSONObject result = null;
         try {
-            String resultStr = HttpRequestUtils.httpPost("http://172.20.11.66:8055/erp/account/login", null, parmar, 6000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/login", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
             System.out.println(resultStr);
             result = JSON.parseObject(resultStr);
         } catch (UnsupportedEncodingException e) {
