@@ -6,7 +6,8 @@
 
     <groupId>ac.cn.saya</groupId>
     <artifactId>gui-lab</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,9 +37,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding>
+                    <!--设置编译时使用的 JDK 版本-->
+                    <source>${java.version}</source>
+                    <!--设置运行时使用的 JDK 版本-->
+                    <target>${java.version}</target>
+                    <!--设置为 true 则跳过测试-->
+                    <skip>${skipTests}</skip>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -46,6 +51,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
+                        <!-- 配置打包后jar包内的元数据，比如classpath是什么【从哪里找依赖】 -->
                         <manifest>
                             <!-- 告知 maven-jar-plugin添加一个 Class-Path元素到 MANIFEST.MF文件，以及在Class-Path元素中包括所有依赖项 -->
                             <addClasspath>true</addClasspath>
@@ -71,10 +77,14 @@
                         <configuration>
                             <!-- ${project.build.directory}为Maven内置变量，缺省为target -->
                             <outputDirectory>${project.build.directory}/classes/lib</outputDirectory>
-                            <!-- 表示是否不包含间接依赖的包  -->
+                            <!-- 要包含间接依赖 -->
                             <excludeTransitive>false</excludeTransitive>
-                            <!-- 表示复制的jar文件去掉版本信息 -->
-                            <stripVersion>true</stripVersion>
+                            <!-- true表示复制的jar文件去掉版本信息 -->
+                            <stripVersion>false</stripVersion>
+                            <!-- 将依赖复制到target目录下的项目lib目录里 -->
+                            <outputDirectory>
+                                ${project.build.directory}/gui-lab/lib
+                            </outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -93,9 +103,9 @@
                             <classpathPrefix>lib/</classpathPrefix>
                             <useUniqueVersions>false</useUniqueVersions>
                         </manifest>
-                        <manifestEntries>
-                            <Class-Path>./</Class-Path>
-                        </manifestEntries>
+<!--                        <manifestEntries>-->
+<!--                            <Class-Path>gui-lab.jar/</Class-Path>-->
+<!--                        </manifestEntries>-->
                     </archive>
                     <!-- 指定打包的jar包输出路径-->
                     <outputDirectory>
@@ -129,6 +139,22 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>8.8.3</version>
+                <!-- mvn jfx:native javafx 专用打包 -->
+                <configuration>
+                    <!-- 启动类 -->
+                    <mainClass>ac.cn.saya.lab.GUIApplication</mainClass>
+                    <!-- 菜单 -->
+                    <needMenu>false</needMenu>
+                    <!-- 公司名称或组织 -->
+                    <vendor>ac.cn.saya</vendor>
+                    <!-- 菜单 -->
+                    <needMenu>false</needMenu>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -175,9 +176,18 @@ public class HomeViewController implements Initializable {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource(pagePath));
             AnchorPane pane = loader.load();
-            pane.setPrefWidth(childPane.getWidth());
-            pane.setPrefHeight(childPane.getHeight());
+            if (childPane.getWidth() != 0.0 && childPane.getHeight() != 0.0){
+                pane.setPrefWidth(childPane.getWidth());
+                pane.setPrefHeight(childPane.getHeight());
+            }else {
+                /// pane.setPrefWidth(1246.0);
+                /// pane.setPrefHeight(508.0);
+                // 启动后第一个页面没有尺寸，这里需要预先指定
+                pane.setPrefWidth(childPane.getMinWidth());
+                pane.setPrefHeight(childPane.getMinHeight());
+            }
             ObservableList<Node> page = childPane.getChildren();
+            // 第一次打开为空
             if (page.size() > 0){
                 // 这里不能用remove
                 childPane.getChildren().clear();

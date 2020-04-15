@@ -6,10 +6,39 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.geometry.Point3D?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="ac.cn.saya.lab.controller.GeneralViewController">
     <children>
-        <Label text="ac.cn.saya.lab.controller.GeneralViewController"/>
+        <GridPane AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10"
+                  AnchorPane.rightAnchor="10" AnchorPane.topAnchor="10" prefWidth="Infinity" prefHeight="Infinity">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" percentHeight="50"/>
+                <RowConstraints vgrow="SOMETIMES" percentHeight="50"/>
+            </rowConstraints>
+            <children>
+                <LineChart fx:id="financialGraph" title="近6个月数据" prefWidth="Infinity" prefHeight="Infinity" alternativeColumnFillVisible="false" alternativeRowFillVisible="true"
+                           titleSide="TOP" style="-fx-background-color: none">
+                    <xAxis>
+                        <CategoryAxis style="-fx-text-fill: #fff" prefHeight="20" prefWidth="Infinity" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis minorTickCount="5" prefHeight="Infinity" side="LEFT" tickLength="4.0" tickUnit="30.0"/>
+                    </yAxis>
+                    <rotationAxis>
+                        <Point3D z="1.0"/>
+                    </rotationAxis>
+                </LineChart>
+            </children>
+        </GridPane>
     </children>
 </AnchorPane>

@@ -17,6 +17,9 @@
             </padding>
             <top>
                 <VBox spacing="16">
+                    <padding>
+                        <Insets bottom="8"/>
+                    </padding>
                     <children>
                         <!--顶部-->
                         <HBox prefWidth="Infinity" spacing="20">
@@ -136,7 +139,7 @@
                 </VBox>
             </top>
             <center>
-                <AnchorPane fx:id="childPane" prefWidth="Infinity" prefHeight="Infinity"/>
+                <AnchorPane fx:id="childPane" minWidth="1240" minHeight="500" prefWidth="Infinity" prefHeight="Infinity"/>
             </center>
         </BorderPane>
     </children>
