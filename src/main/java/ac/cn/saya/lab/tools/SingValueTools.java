@@ -1,7 +1,11 @@
 package ac.cn.saya.lab.tools;
 
+import ac.cn.saya.lab.api.RequestUrl;
 import ac.cn.saya.lab.entity.DealDirection;
+import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +23,13 @@ public class SingValueTools {
 
     public static List<TransactionTypeEntity> getDealType(){
         List<TransactionTypeEntity> list = new ArrayList<>();
-        list.add(new TransactionTypeEntity(0,"支付宝"));
-        list.add(new TransactionTypeEntity(2,"微信"));
-        list.add(new TransactionTypeEntity(3,"信用卡"));
+        list.add(new TransactionTypeEntity(-1,"请选择"));
+        // 向后台发起获取交易类别
+        Result<Object> requestResult = RequestUrl.getTransactionType();
+        if (ResultUtil.checkSuccess(requestResult)){
+            JSONArray requestData = (JSONArray)requestResult.getData();
+            list.addAll(JSONObject.parseArray(requestData.toJSONString(), TransactionTypeEntity.class));
+        }
         return list;
     }
 

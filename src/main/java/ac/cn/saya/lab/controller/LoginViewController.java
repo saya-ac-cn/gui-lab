@@ -2,6 +2,8 @@ package ac.cn.saya.lab.controller;
 
 import ac.cn.saya.lab.GUIApplication;
 import ac.cn.saya.lab.api.RequestUrl;
+import ac.cn.saya.lab.tools.Result;
+import ac.cn.saya.lab.tools.ResultUtil;
 import ac.cn.saya.lab.tools.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import javafx.fxml.FXML;
@@ -59,6 +61,8 @@ public class LoginViewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         userNameLabel.setGraphic(new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/user.png"),20,20,false,false)));
         passwordLabel.setGraphic(new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/password.png"),20,20,false,false)));
+        userNameField.setText("Pandora");
+        passwordField.setText("Pandora520815");
     }
 
     /**
@@ -72,10 +76,10 @@ public class LoginViewController implements Initializable {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user",userNameField.getText());
             jsonObject.put("password",passwordField.getText());
-            JSONObject result = RequestUrl.login(jsonObject);
-            if (RequestUrl.checkSuccess(result) && result.getInteger("code") == 0){
+            Result<Object> result = RequestUrl.login(jsonObject);
+            if (ResultUtil.checkSuccess(result)){
                 //显示主界面
-                mainApp.showHomeView();
+                mainApp.showHomeView((result.getData() == null)?null:(JSONObject)result.getData());
             }else {
                 errorInfoLabel.setText("用户名或密码错误");
                 userNameField.setText(null);

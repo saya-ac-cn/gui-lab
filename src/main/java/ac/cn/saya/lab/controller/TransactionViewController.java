@@ -1,16 +1,19 @@
 package ac.cn.saya.lab.controller;
 
 import ac.cn.saya.lab.GUIApplication;
+import ac.cn.saya.lab.api.RequestUrl;
 import ac.cn.saya.lab.assemb.AdvisorPagingAndDate;
 import ac.cn.saya.lab.control.EditTransactionControl;
 import ac.cn.saya.lab.control.EditTransactionInfoControl;
+import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
 import ac.cn.saya.lab.entity.UserEntity;
-import ac.cn.saya.lab.tools.DateUtils;
-import ac.cn.saya.lab.tools.NoticeUtils;
-import ac.cn.saya.lab.tools.PagingTools;
-import ac.cn.saya.lab.tools.SingValueTools;
+import ac.cn.saya.lab.tools.*;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,14 +30,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -52,57 +59,96 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
      * 表格
      */
     @FXML
-    public TableView<UserEntity> dataTableView;
+    private TableView<TransactionListEntity> dataTableView;
 
     /**
      * 数据
      */
-    public ObservableList<UserEntity> data = FXCollections.observableArrayList();
+    private ObservableList<TransactionListEntity> data = FXCollections.observableArrayList();
 
     /**
-     * account
+     * 流水编号
      */
     @FXML
-    public TableColumn<UserEntity, String> account;
+    private TableColumn<TransactionListEntity, Integer> tradeId;
 
     /**
-     * name
+     * 存入
      */
     @FXML
-    public TableColumn<UserEntity, String> name;
+    private TableColumn<TransactionListEntity, Double> deposited;
 
     /**
-     * roleName
+     * 支出
      */
     @FXML
-    public TableColumn<UserEntity, String> roleName;
+    private TableColumn<TransactionListEntity, Double> expenditure;
 
     /**
-     * createTime
+     * 交易方式
      */
     @FXML
-    public TableColumn<UserEntity, String> createTime;
+    private TableColumn<TransactionListEntity, String> transactionType;
+
+    /**
+     * 产生总额
+     */
+    @FXML
+    private TableColumn<TransactionListEntity, Double> currencyNumber;
+
+    /**
+     * 摘要
+     */
+    @FXML
+    private TableColumn<TransactionListEntity, String> transactionAmount;
+
+    /**
+     * 交易日期
+     */
+    @FXML
+    private TableColumn<TransactionListEntity, String> tradeDate;
 
     @FXML
-    private TableColumn<UserEntity, String> operateCol;
+    private TableColumn<TransactionListEntity, String> operateCol;
 
     /**
      * 交易类别
      */
     @FXML
-    public ChoiceBox<TransactionTypeEntity> dealType;
+    private ChoiceBox<TransactionTypeEntity> dealType;
 
-    @FXML
-    public Button search;
+    /**
+     * 查询条件
+     */
+    private JSONObject queryCondition = new JSONObject();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        account.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("account"));
-        name.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("name"));
-        roleName.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("roleName"));
-        createTime.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("createTime"));
+        // 页面选择器初始化
+        dealType.getItems().addAll(SingValueTools.getDealType());
+        dealType.converterProperty().set(new TransactionTypeChoiceBox());
+        //默认选中第一个选项
+        dealType.getSelectionModel().selectFirst();
+        // 时间范围初始化
+        initDatePicker();
+        // 表格初始化
+        tradeId.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Integer>("tradeId"));
+        deposited.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("deposited"));
+        expenditure.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("expenditure"));
+        transactionType.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<TransactionListEntity, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(TableColumn.CellDataFeatures<TransactionListEntity, String> arg0) {
+                // return new
+                // SimpleStringProperty(arg0.getValue(),"sd",arg0.getValue().getFirstName());
+                // //bean, bean的名称，值
+                return new SimpleStringProperty(arg0.getValue().getTradeTypeEntity().getTransactionType());
+            }
+        });
+        currencyNumber.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("currencyNumber"));
+        transactionAmount.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, String>("transactionAmount"));
+        tradeDate.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, String>("tradeDate"));
         operateCol.setCellFactory((col) -> {
-            TableCell<UserEntity, String> cell = new TableCell<UserEntity, String>() {
+            TableCell<TransactionListEntity, String> cell = new TableCell<TransactionListEntity, String>() {
 
                 @Override
                 public void updateItem(String item, boolean empty) {
@@ -137,8 +183,8 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
                             openEditTransaction();
                         });
                         deleteLabel.setOnMouseClicked(me -> {
-                            UserEntity user = this.getTableView().getItems().get(this.getIndex());
-                            System.out.println("删除 " + user.getAccount() + " 的记录");
+                            TransactionListEntity user = this.getTableView().getItems().get(this.getIndex());
+                            System.out.println("删除 " + user.getTradeId() + " 的记录");
                             Stage stage = new Stage();
                             NoticeUtils.confirm(
                                     stage,
@@ -156,10 +202,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
             };
             return cell;
         });
-        Platform.runLater(() -> getData(1));
-        dealType.getItems().addAll(SingValueTools.getDealType());
-        dealType.getSelectionModel().selectFirst();//默认选中第一个选项
-        initDatePicker();
+        Platform.runLater(() -> handleSearchAction());
     }
 
     /**
@@ -168,24 +211,27 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
      * @param pageNum 用户想要得到的页
      */
     private void getData(int pageNum) {
-        // 数据查询
-        data.clear();
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-
-        dataTableView.setItems(data);
-        // 请求成功后更新当前页码 和 总页数
-        pageIndex = pageNum;
-        pageCount = 10;
-        displayTable(true);
+        queryCondition.put("nowPage",pageNum);
+        queryCondition.put("pageSize",10);
+        // 请求数据查询
+        Result<Object> requestResult = RequestUrl.getTransactionList(queryCondition);
+        if (ResultUtil.checkSuccess(requestResult)){
+            // 请求成功
+            JSONObject requestData = (JSONObject)requestResult.getData();
+            JSONArray grid = (JSONArray) requestData.getOrDefault("grid",null);
+            List<TransactionListEntity> gridList = JSONObject.parseArray(grid.toJSONString(), TransactionListEntity.class);
+            data.clear();
+            data.addAll(gridList);
+            dataTableView.setItems(data);
+            // 请求成功后更新当前页码 和 总页数
+            pageIndex = requestData.getInteger("pageNow");
+            pageCount = requestData.getInteger("totalPage");
+            displayTable(true);
+        }else {
+            data.clear();
+            dataTableView.setItems(data);
+            displayTable(false);
+        }
     }
 
     /**
@@ -257,4 +303,60 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         controller.secondRefresh();
     }
 
+    /**
+     * 搜索事件，触发搜索时，表示页面的筛选条件已经改变，需从第一页开始
+     */
+    public void handleSearchAction(){
+        queryCondition.clear();
+        Integer _type = dealType.getSelectionModel().getSelectedItem().getId();
+        if (-1 != _type){
+            queryCondition.put("tradeType",_type);
+        }
+        String _beginTime = beginTime.getValue().format(DateUtils.dateFormat);
+        String _endTime = endTime.getValue().format(DateUtils.dateFormat);
+        queryCondition.put("beginTime",_beginTime);
+        queryCondition.put("endTime",_endTime);
+        getData(1);
+    }
+
+    /**
+     * 重置搜索条件
+     */
+    public void handleRestSearchAction(){
+        // 清空后台的筛选条件
+        queryCondition.clear();
+        // 清空页面表单的筛选条件
+        dealType.getSelectionModel().selectFirst();
+        beginTime.setValue(LocalDate.now().minusMonths(1));
+        endTime.setValue(LocalDate.now());
+        handleSearchAction();
+    }
+
+    /**
+     * 导出
+     */
+    public void handleOutAction(){
+        JSONObject outCondition = new JSONObject();
+        Integer _type = dealType.getSelectionModel().getSelectedItem().getId();
+        if (-1 != _type){
+            outCondition.put("tradeType",_type);
+        }
+        String _beginTime = beginTime.getValue().format(DateUtils.dateFormat);
+        String _endTime = endTime.getValue().format(DateUtils.dateFormat);
+        outCondition.put("beginTime",_beginTime);
+        outCondition.put("endTime",_endTime);
+        //得到用户导出的文件路径
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("报表导出");
+        fileChooser.setInitialFileName("财务流水报表.xlsx");
+        Stage s = new Stage();
+        File file = fileChooser.showSaveDialog(s);
+        if(file==null) {
+            return;
+        }
+        // 得到输出文件路径
+        String exportFilePath = file.getAbsolutePath().replaceAll(".xlsx", "")+".xlsx";
+        RequestUrl.downTransaction(outCondition,exportFilePath);
+    }
+    
 }

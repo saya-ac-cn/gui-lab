@@ -37,11 +37,12 @@ public class AdvisorPagingAndDate extends PagingTools {
     public DatePicker endTime;
 
     /**
+     * 查询一个月的
      * 初始化时间选择器
      */
     public void initDatePicker(){
-        // 设置开始时间
-        beginTime.setValue(LocalDate.now());
+        // 设置开始时间上一个月
+        beginTime.setValue(LocalDate.now().minusMonths(1));
         final Callback<DatePicker, DateCell> endDatePickerFactory =
                 new Callback<DatePicker, DateCell>() {
                     @Override
@@ -62,8 +63,8 @@ public class AdvisorPagingAndDate extends PagingTools {
                 };
         // 为结束时间绑定事件，使之不能早于开始时间
         endTime.setDayCellFactory(endDatePickerFactory);
-        // 设置结束时间为开始时间的下一天
-        endTime.setValue(beginTime.getValue().plusDays(1));
+        // 设置结束时间为当前时间
+        endTime.setValue(LocalDate.now());
         final Callback<DatePicker, DateCell> firstDatePickerFactory =
                 new Callback<DatePicker, DateCell>() {
                     @Override

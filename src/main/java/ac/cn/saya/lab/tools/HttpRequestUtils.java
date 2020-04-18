@@ -1,14 +1,8 @@
 package ac.cn.saya.lab.tools;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.SocketTimeoutException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -319,7 +313,7 @@ public class HttpRequestUtils {
     public static String httpPost(String url, JSONObject headers, JSONObject params, Integer timeOut, boolean isStream, HttpClientContext clientContext) throws UnsupportedEncodingException {
         // 创建post请求
         HttpPost httpPost = new HttpPost(url);
-        //2.1设置请求头 发送的是json数据格式
+        // 设置请求头 发送的是json数据格式
         httpPost.setHeader("Content-type", "application/json;charset=utf-8");
         httpPost.setHeader("Connection", "Close");
         // 添加请求头信息
@@ -331,7 +325,8 @@ public class HttpRequestUtils {
         // 添加请求参数信息
         if (null != params) {
             StringEntity entity = new StringEntity(JSON.toJSONString(params), ENCODING);
-            entity.setContentEncoding("UTF-8");  //设置编码格式
+            //设置编码格式
+            entity.setContentEncoding("UTF-8");
             // 发送Json格式的数据请求
             entity.setContentType("application/json");
             //把请求消息实体塞进去
@@ -396,6 +391,127 @@ public class HttpRequestUtils {
      * get请求,支持SSL
      *
      * @param url           请求地址
+     * @param headers       请求头信息
+     * @param params        请求参数
+     * @param timeOut       超时时间(毫秒):从连接池获取连接的时间,请求时间,响应时间
+     * @param isStream      是否以流的方式获取响应信息
+     * @param clientContext Http请求客户端上下文对象，包含Cookie
+     * @return 响应信息
+     * @throws URISyntaxException
+     */
+    public static String httpGet(String url, JSONObject headers, JSONObject params, Integer timeOut, boolean isStream, HttpClientContext clientContext) throws URISyntaxException {
+        // 构建url
+        URIBuilder uriBuilder = new URIBuilder(url);
+        // 添加请求参数信息
+        if (null != params) {
+            uriBuilder.setParameters(covertParams2NVPS(params));
+        }
+        URI uri = uriBuilder.build();
+        // 创建post请求
+        HttpGet httpGet = new HttpGet(uri);
+        // 设置请求头 发送的是json数据格式
+        httpGet.setHeader("Content-type", "application/json;charset=utf-8");
+        httpGet.setHeader("Connection", "Close");
+        // 添加请求头信息
+        if (null != headers) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                httpGet.addHeader(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        return getResult(httpGet, timeOut, isStream, clientContext);
+    }
+
+    /**
+     * 文件下载,支持SSL
+     *
+     * @param url           请求地址
+     * @param headers       请求头信息
+     * @param params        请求参数
+     * @param savePath      保存路径
+     * @param timeOut       超时时间(毫秒):从连接池获取连接的时间,请求时间,响应时间
+     * @param isStream      是否以流的方式获取响应信息
+     * @param clientContext Http请求客户端上下文对象，包含Cookie
+     * @return 响应信息
+     * @throws URISyntaxException
+     */
+    public static boolean httpDownload(String url, JSONObject headers, JSONObject params, String savePath, Integer timeOut, boolean isStream, HttpClientContext clientContext) throws URISyntaxException {
+        // 构建url
+        URIBuilder uriBuilder = new URIBuilder(url);
+        // 添加请求参数信息
+        if (null != params) {
+            uriBuilder.setParameters(covertParams2NVPS(params));
+        }
+        boolean result = false;
+        URI uri = uriBuilder.build();
+        // 创建post请求
+        HttpGet httpGet = new HttpGet(uri);
+        // 设置请求头 发送的是json数据格式
+        httpGet.setHeader("Content-type", "application/json;charset=utf-8");
+        httpGet.setHeader("Connection", "Close");
+        // 添加请求头信息
+        if (null != headers) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                httpGet.addHeader(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        CloseableHttpResponse response = null;
+        InputStream is = null;
+        FileOutputStream fileOut = null;
+        // 获取连接客户端
+        CloseableHttpClient httpClient = getHttpClient(timeOut);
+        try {
+            // 发起请求
+            if (null != clientContext) {
+                response = httpClient.execute(httpGet, clientContext);
+            } else {
+                response = httpClient.execute(httpGet);
+            }
+            // 获取状态码
+            int respCode = response.getStatusLine().getStatusCode();
+            if (200 == respCode){
+                HttpEntity entity = response.getEntity();
+                is = entity.getContent();
+                File file = new File(savePath);
+                file.getParentFile().mkdirs();
+                fileOut = new FileOutputStream(file);
+                /**
+                 * 根据实际运行效果 设置缓冲区大小
+                 */
+                byte[] buffer = new byte[4096];
+                int ch = 0;
+                while ((ch = is.read(buffer)) != -1) {
+                    fileOut.write(buffer, 0, ch);
+                }
+                fileOut.flush();
+                result = true;
+            }
+        } catch (IOException e) {
+            result = false;
+            e.printStackTrace();
+        } finally {
+            if (null != is){
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (null != fileOut){
+                try {
+                    fileOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return result;
+        }
+
+    }
+
+    /**
+     * get请求,支持SSL
+     *
+     * @param url           请求地址
      * @param params        请求参数
      * @param timeOut       超时时间(毫秒):从连接池获取连接的时间,请求时间,响应时间
      * @param clientContext Http请求客户端上下文对象，包含Cookie
@@ -414,35 +530,6 @@ public class HttpRequestUtils {
         return getResult(httpGet, timeOut, true, clientContext);
     }
 
-    /**
-     * get请求,支持SSL
-     *
-     * @param url           请求地址
-     * @param headers       请求头信息
-     * @param params        请求参数
-     * @param timeOut       超时时间(毫秒):从连接池获取连接的时间,请求时间,响应时间
-     * @param isStream      是否以流的方式获取响应信息
-     * @param clientContext Http请求客户端上下文对象，包含Cookie
-     * @return 响应信息
-     * @throws URISyntaxException
-     */
-    public static String httpGet(String url, JSONObject headers, JSONObject params, Integer timeOut, boolean isStream, HttpClientContext clientContext) throws URISyntaxException {
-        // 构建url
-        URIBuilder uriBuilder = new URIBuilder(url);
-        // 添加请求参数信息
-        if (null != params) {
-            uriBuilder.setParameters(covertParams2NVPS(params));
-        }
-        // 创建post请求
-        HttpGet httpGet = new HttpGet(url);
-        // 添加请求头信息
-        if (null != headers) {
-            for (Map.Entry<String, Object> entry : headers.entrySet()) {
-                httpGet.addHeader(entry.getKey(), entry.getValue().toString());
-            }
-        }
-        return getResult(httpGet, timeOut, isStream, clientContext);
-    }
 
     /**
      * get请求,支持SSL
@@ -470,7 +557,6 @@ public class HttpRequestUtils {
         // 响应结果
         StringBuilder sb = null;
         CloseableHttpResponse response = null;
-        httpRequest.setHeader("Content-Type","application/json;charset=utf-8");
         try {
             // 获取连接客户端
             CloseableHttpClient httpClient = getHttpClient(timeOut);

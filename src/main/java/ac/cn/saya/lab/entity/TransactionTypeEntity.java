@@ -30,11 +30,6 @@ public class TransactionTypeEntity implements Serializable {
         this.transactionType = transactionType;
     }
 
-    @Override
-    public String toString() {
-        return transactionType;
-    }
-
     public Integer getId() {
         return id;
     }

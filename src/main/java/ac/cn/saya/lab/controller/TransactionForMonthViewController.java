@@ -1,9 +1,15 @@
 package ac.cn.saya.lab.controller;
 
+import ac.cn.saya.lab.api.RequestUrl;
 import ac.cn.saya.lab.assemb.AdvisorPagingAndDate;
+import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.UserEntity;
 import ac.cn.saya.lab.tools.DateUtils;
 import ac.cn.saya.lab.tools.PagingTools;
+import ac.cn.saya.lab.tools.Result;
+import ac.cn.saya.lab.tools.ResultUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,8 +20,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -33,53 +43,48 @@ public class TransactionForMonthViewController extends PagingTools implements In
      * 表格
      */
     @FXML
-    public TableView<UserEntity> dataTableView;
+    public TableView<TransactionListEntity> dataTableView;
 
     /**
      * 数据
      */
-    public ObservableList<UserEntity> data = FXCollections.observableArrayList();
+    public ObservableList<TransactionListEntity> data = FXCollections.observableArrayList();
 
     /**
-     * account
+     * 存入
      */
     @FXML
-    public TableColumn<UserEntity, String> account;
+    private TableColumn<TransactionListEntity, Double> deposited;
 
     /**
-     * name
+     * 支出
      */
     @FXML
-    public TableColumn<UserEntity, String> name;
+    private TableColumn<TransactionListEntity, Double> expenditure;
 
     /**
-     * roleName
+     * 产生总额
      */
     @FXML
-    public TableColumn<UserEntity, String> roleName;
+    private TableColumn<TransactionListEntity, Double> currencyNumber;
 
     /**
-     * createTime
+     * 交易日期
      */
     @FXML
-    public TableColumn<UserEntity, String> createTime;
+    private TableColumn<TransactionListEntity, String> tradeDate;
 
-
-
-
-    @FXML
-    public Button search;
+    /**
+     * 查询条件
+     */
+    private JSONObject queryCondition = new JSONObject();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        account.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("account"));
-        name.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("name"));
-        roleName.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("roleName"));
-        createTime.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("createTime"));
-        account.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("account"));
-        name.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("name"));
-        roleName.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("roleName"));
-        createTime.setCellValueFactory(new PropertyValueFactory<UserEntity, String>("createTime"));
+        deposited.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("deposited"));
+        expenditure.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("expenditure"));
+        currencyNumber.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("currencyNumber"));
+        tradeDate.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, String>("tradeDate"));
         dataTableView.setItems(data);
         Platform.runLater(() -> getData(1));
     }
@@ -90,16 +95,27 @@ public class TransactionForMonthViewController extends PagingTools implements In
      * @param pageNum 用户想要得到的页
      */
     private void getData(int pageNum) {
-        // 数据查询
-        data.clear();
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        data.add(new UserEntity("saya", "saya", "team" + pageNum, "2020-3-31 12:01:16"));
-        dataTableView.setItems(data);
-        // 请求成功后更新当前页码 和 总页数
-        pageIndex = pageNum;
-        pageCount = 10;
-        displayTable(true);
+        queryCondition.put("nowPage",pageNum);
+        queryCondition.put("pageSize",10);
+        // 请求数据查询
+        Result<Object> requestResult = RequestUrl.totalTransactionForMonth(queryCondition);
+        if (ResultUtil.checkSuccess(requestResult)){
+            // 请求成功
+            JSONObject requestData = (JSONObject)requestResult.getData();
+            JSONArray grid = (JSONArray) requestData.getOrDefault("grid",null);
+            List<TransactionListEntity> gridList = JSONObject.parseArray(grid.toJSONString(), TransactionListEntity.class);
+            data.clear();
+            data.addAll(gridList);
+            dataTableView.setItems(data);
+            // 请求成功后更新当前页码 和 总页数
+            pageIndex = requestData.getInteger("pageNow");
+            pageCount = requestData.getInteger("totalPage");
+            displayTable(true);
+        }else {
+            data.clear();
+            dataTableView.setItems(data);
+            displayTable(false);
+        }
     }
 
     /**
@@ -112,6 +128,25 @@ public class TransactionForMonthViewController extends PagingTools implements In
         // 即将要跳转的位置
         int newIndex = computeJumpNum(bu.getId());
         getData(newIndex);
+    }
+
+    /**
+     * 导出
+     */
+    public void handleOutAction(){
+        JSONObject outCondition = new JSONObject();
+        //得到用户导出的文件路径
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("报表导出");
+        fileChooser.setInitialFileName("财务流水月度报表.xlsx");
+        Stage s = new Stage();
+        File file = fileChooser.showSaveDialog(s);
+        if(file==null) {
+            return;
+        }
+        // 得到输出文件路径
+        String exportFilePath = file.getAbsolutePath().replaceAll(".xlsx", "")+".xlsx";
+        RequestUrl.outTransactionForMonthExcel(exportFilePath);
     }
 
 }

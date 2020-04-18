@@ -2,6 +2,7 @@ package ac.cn.saya.lab;
 
 import ac.cn.saya.lab.controller.HomeViewController;
 import ac.cn.saya.lab.controller.LoginViewController;
+import com.alibaba.fastjson.JSONObject;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -50,8 +51,8 @@ public class GUIApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         try {
             stage  = primaryStage;
-            //showLoginView();
-            showHomeView();
+            // 启动打开认证页面
+            showLoginView();
             // 全局名字统一
             stage.setTitle("Home");
             // 设置窗口风格，去掉窗口修饰 TRANSPARENT——透明背景，没有操作系统平台装饰
@@ -83,10 +84,11 @@ public class GUIApplication extends Application {
     /**
      *	显示主页界面
      */
-    public void showHomeView() {
+    public void showHomeView(JSONObject data) {
         try {
-            HomeViewController rpController = (HomeViewController)replaceSceneContent("page/home.fxml",true);
-            rpController.setMainApp(this);
+            HomeViewController controller = (HomeViewController)replaceSceneContent("page/home.fxml",true);
+            controller.setUserData(data);
+            controller.setMainApp(this);
         }catch(Exception e) {
             e.printStackTrace();
         }

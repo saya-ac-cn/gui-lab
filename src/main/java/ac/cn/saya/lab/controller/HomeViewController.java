@@ -1,7 +1,13 @@
 package ac.cn.saya.lab.controller;
 
 import ac.cn.saya.lab.GUIApplication;
+import ac.cn.saya.lab.api.RequestUrl;
+import ac.cn.saya.lab.entity.LogEntity;
+import ac.cn.saya.lab.entity.PlanEntity;
+import ac.cn.saya.lab.entity.UserEntity;
 import ac.cn.saya.lab.tools.DateUtils;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,6 +36,11 @@ import java.util.ResourceBundle;
 public class HomeViewController implements Initializable {
 
     private GUIApplication mainApp;
+
+    /**
+     * 用户登录成功后，保存的数据
+     */
+    private JSONObject userData;
 
     /**
      * 用户头像
@@ -97,13 +108,47 @@ public class HomeViewController implements Initializable {
         this.mainApp = mainApp;
     }
 
+    /**
+     * 初始化界面用户信息
+     * @param value
+     */
+    public void setUserData(JSONObject value){
+        if (null == value){
+            // 获取用户数据失败，显示默认
+            userLogo.setGraphic(new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/logo.png"),114,114,false,false)));
+            userHelloText.setText(DateUtils.getNowHourHello()+"好！未知用户");
+            userGreetText.setText(DateUtils.getGreetText());
+            userLastActionText.setText("最后一次操作：");
+            todayPlan.setText("没有安排");
+        }else {
+            this.userData = value;
+            JSONObject user = (JSONObject)this.userData.getOrDefault("user",null);
+            JSONArray plan = (JSONArray) this.userData.getOrDefault("plan",null);
+            JSONObject log = (JSONObject) this.userData.getOrDefault("log",null);
+            if (null == user || user.isEmpty()){
+                userLogo.setGraphic(new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/logo.png"),114,114,false,false)));
+                userHelloText.setText(DateUtils.getNowHourHello()+"好！未知用户");
+            }else {
+                userLogo.setGraphic(new ImageView(new Image(RequestUrl.prefixUrh+user.getString("logo"),114,114,false,false)));
+                userHelloText.setText(DateUtils.getNowHourHello()+"好！"+user.getString("user"));
+            }
+            if (null == log || log.isEmpty()){
+                userLastActionText.setText("Hi，这是您第一次使用吧？愿您有个好的开始！");
+            }else {
+                userLastActionText.setText("最后一次操作："+log.getString("date")+" "+log.getString("city"));
+            }
+            if (null == plan || plan.isEmpty()){
+                todayPlan.setText("无安排");
+            }else {
+                todayPlan.setText(((JSONObject)plan.get(0)).getString("describe"));
+            }
+        }
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        userLogo.setGraphic(new ImageView(new Image(GUIApplication.class.getResourceAsStream("/images/logo.png"),114,114,false,false)));
-        userHelloText.setText(DateUtils.getNowHourHello()+"好！刘能凯");
+        // 用户欢迎语
         userGreetText.setText(DateUtils.getGreetText());
-        userLastActionText.setText("最后一次操作：2020-04-10 22:39:14 四川成都");
-        todayPlan.setText("复习JVM");
         // 设置日历
         calendarMonth.setText(DateUtils.getCurrentMonth());
         calendarDay.setText(DateUtils.getCurrentDay());
