@@ -49,4 +49,5 @@ public class DealDirection {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }

@@ -28,10 +28,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.config.Registry;
@@ -551,6 +548,78 @@ public class HttpRequestUtils {
         // 创建post请求
         HttpGet httpGet = new HttpGet(url);
         return getResult(httpGet, timeOut, true, clientContext);
+    }
+
+    /**
+     * Put请求,支持SSL
+     *
+     * @param url           请求地址
+     * @param headers       请求头信息
+     * @param params        请求参数
+     * @param timeOut       超时时间(毫秒):从连接池获取连接的时间,请求时间,响应时间
+     * @param isStream      是否以流的方式获取响应信息
+     * @param clientContext Http请求客户端上下文对象，包含Cookie
+     * @return 响应信息
+     * @throws UnsupportedEncodingException
+     */
+    public static String httpPut(String url, JSONObject headers, JSONObject params, Integer timeOut, boolean isStream, HttpClientContext clientContext) throws UnsupportedEncodingException {
+        // 创建Put请求
+        HttpPut httpPut = new HttpPut(url);
+        // 设置请求头 发送的是json数据格式
+        httpPut.setHeader("Content-type", "application/json;charset=utf-8");
+        httpPut.setHeader("Connection", "Close");
+        // 添加请求头信息
+        if (null != headers) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                httpPut.addHeader(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        // 添加请求参数信息
+        if (null != params) {
+            StringEntity entity = new StringEntity(JSON.toJSONString(params), ENCODING);
+            //设置编码格式
+            entity.setContentEncoding("UTF-8");
+            // 发送Json格式的数据请求
+            entity.setContentType("application/json");
+            //把请求消息实体塞进去
+            httpPut.setEntity(entity);
+        }
+        return getResult(httpPut, timeOut, isStream, clientContext);
+
+    }
+
+    /**
+     * delete请求,支持SSL
+     *
+     * @param url           请求地址
+     * @param headers       请求头信息
+     * @param params        请求参数
+     * @param timeOut       超时时间(毫秒):从连接池获取连接的时间,请求时间,响应时间
+     * @param isStream      是否以流的方式获取响应信息
+     * @param clientContext Http请求客户端上下文对象，包含Cookie
+     * @return 响应信息
+     * @throws URISyntaxException
+     */
+    public static String httpDelete(String url, JSONObject headers, JSONObject params, Integer timeOut, boolean isStream, HttpClientContext clientContext) throws URISyntaxException {
+        // 构建url
+        URIBuilder uriBuilder = new URIBuilder(url);
+        // 添加请求参数信息
+        if (null != params) {
+            uriBuilder.setParameters(covertParams2NVPS(params));
+        }
+        URI uri = uriBuilder.build();
+        // 创建Deletet请求
+        HttpDelete httpDeletet = new HttpDelete(uri);
+        // 设置请求头 发送的是json数据格式
+        httpDeletet.setHeader("Content-type", "application/json;charset=utf-8");
+        httpDeletet.setHeader("Connection", "Close");
+        // 添加请求头信息
+        if (null != headers) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                httpDeletet.addHeader(entry.getKey(), entry.getValue().toString());
+            }
+        }
+        return getResult(httpDeletet, timeOut, isStream, clientContext);
     }
 
     private static String getResult(HttpRequestBase httpRequest, Integer timeOut, boolean isStream, HttpClientContext clientContext) {

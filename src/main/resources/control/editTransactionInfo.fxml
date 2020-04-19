@@ -37,7 +37,7 @@
                                 <TextField fx:id="addChargeField" styleClass="general-input" prefWidth="100"/>
                                 <Label text="详情"/>
                                 <TextField fx:id="addDescField" styleClass="general-input" prefWidth="230"/>
-                                <Button styleClass="addButton" text="加入">
+                                <Button styleClass="addButton" text="加入" onMouseClicked="#handleAddInfoAction">
                                     <graphic>
                                         <ImageView fitHeight="20" preserveRatio="true">
                                             <Image url="@../images/icon-add.png"/>
@@ -70,7 +70,7 @@
                                 <TextField fx:id="editChargeField" styleClass="general-input" prefWidth="100"/>
                                 <Label text="详情"/>
                                 <TextField fx:id="editDescField" styleClass="general-input" prefWidth="230"/>
-                                <Button fx:id="editButton" styleClass="editButton" text="修改">
+                                <Button fx:id="editButton" styleClass="editButton" text="修改" onMouseClicked="#handleEditInfoAction">
                                     <graphic>
                                         <ImageView fitHeight="20" preserveRatio="true">
                                             <Image url="@../images/bianji.png"/>
@@ -84,18 +84,11 @@
             </center>
             <bottom>
                 <HBox spacing="16" alignment="CENTER_RIGHT">
-                    <Button fx:id="closeButton" styleClass="removeButton" onMouseClicked="#handleClosePageAction"
-                            text="取消">
+                    <Button styleClass="removeButton" onMouseClicked="#handleClosePageAction"
+                            text="关闭">
                         <graphic>
                             <ImageView fitHeight="20" preserveRatio="true">
                                 <Image url="@../images/icon-delete.png"/>
-                            </ImageView>
-                        </graphic>
-                    </Button>
-                    <Button fx:id="submitButton" styleClass="saveButton" text="提交">
-                        <graphic>
-                            <ImageView fitHeight="20" preserveRatio="true">
-                                <Image url="@../images/icon-submit.png"/>
                             </ImageView>
                         </graphic>
                     </Button>

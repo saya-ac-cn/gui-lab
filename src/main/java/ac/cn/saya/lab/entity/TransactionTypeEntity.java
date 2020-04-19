@@ -22,14 +22,6 @@ public class TransactionTypeEntity implements Serializable {
      */
     private String transactionType;
 
-    public TransactionTypeEntity() {
-    }
-
-    public TransactionTypeEntity(Integer id, String transactionType) {
-        this.id = id;
-        this.transactionType = transactionType;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -44,5 +36,32 @@ public class TransactionTypeEntity implements Serializable {
 
     public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
+    }
+
+    public TransactionTypeEntity() {
+    }
+
+    public TransactionTypeEntity(Integer id, String transactionType) {
+        this.id = id;
+        this.transactionType = transactionType;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj == null){
+            return false;
+        }else {
+            if(this.getClass() == obj.getClass()){
+                TransactionTypeEntity u = (TransactionTypeEntity) obj;
+                if(this.getId().equals(u.getId())){
+                    return true;
+                }else{
+                    return false;
+                }
+
+            }else{
+                return false;
+            }
+        }
     }
 }

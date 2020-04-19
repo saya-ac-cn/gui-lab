@@ -1,15 +1,14 @@
 package ac.cn.saya.lab.controller;
 
 import ac.cn.saya.lab.GUIApplication;
+import ac.cn.saya.lab.api.RequestUrl;
 import ac.cn.saya.lab.entity.DealDirection;
 import ac.cn.saya.lab.entity.TransactionInfoEntity;
 import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
-import ac.cn.saya.lab.tools.InputFormatter;
-import ac.cn.saya.lab.tools.NoticeUtils;
-import ac.cn.saya.lab.tools.SingValueTools;
-import ac.cn.saya.lab.tools.StringUtils;
+import ac.cn.saya.lab.tools.*;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,8 +19,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -46,6 +47,12 @@ public class DeclareViewController implements Initializable {
     public ChoiceBox<TransactionTypeEntity> dealType;
 
     /**
+     * 交易时间
+     */
+    @FXML
+    public DatePicker tradeDate;
+
+    /**
      * 交易摘要
      */
     @FXML
@@ -59,8 +66,16 @@ public class DeclareViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 页面选择器初始化
         dealType.getItems().addAll(SingValueTools.getDealType());
-        dealType.getSelectionModel().selectFirst();//默认选中第一个选项
+        dealType.converterProperty().set(new TransactionTypeChoiceBox());
+        //默认选中第一个选项
+        dealType.getSelectionModel().selectFirst();
+        // 设置开始时间
+        tradeDate.setValue(LocalDate.now());
+        tradeDate.setConverter(new DateConverter());
+        StringConverter<LocalDate> converter = new DateConverter();
+        tradeDate.setConverter(converter);
         // 构造第0行
         addSummaryLineHandleAction();
         summaryText.setTextFormatter(InputFormatter.stringLengthFormatte());
@@ -156,31 +171,53 @@ public class DeclareViewController implements Initializable {
      * 用户提交事件
      */
     public void handleSubmitActin(){
-        TransactionListEntity data = checkData();
-        if (null != data){
-            System.out.println(JSON.toJSONString(data));
-            System.out.println(JSONObject.toJSONString(data));
+        JSONObject data = checkData();
+        boolean err = data.containsKey("err");
+        if (err){
+            NoticeUtils.show("提示",data.getString("err"));
         }else {
-            NoticeUtils.show("提示","您申报的数据有误，请重新填写！");
+            Result<Object> requestResult = RequestUrl.applyTransaction(data);
+            if (ResultUtil.checkSuccess(requestResult)){
+                NoticeUtils.show("处理结果","申报成功");
+                // 还原表单
+                //默认选中第一个选项
+                dealType.getSelectionModel().selectFirst();
+                // 设置开始时间
+                tradeDate.setValue(LocalDate.now());
+                summaryText.setText(null);
+                summaryInfoVbox.getChildren().clear();
+                // 构造第0行
+                addSummaryLineHandleAction();
+            }else {
+                NoticeUtils.show("处理结果",requestResult.getMsg());
+            }
         }
     }
 
     /**
      * 校验用户数据
      */
-    private TransactionListEntity checkData(){
+    private JSONObject checkData(){
         ObservableList<Node> children = summaryInfoVbox.getChildren();
         HBox node;
         ChoiceBox<DealDirection> choiceBox;
         TextField chargeField,descField;
+        JSONObject para = new JSONObject();
         try {
             // 用户选中的支付方式
-            // Integer _dealType = dealType.getSelectionModel().getSelectedItem().getId();
+            Integer _dealType = dealType.getSelectionModel().getSelectedItem().getId();
+            if (-1 == _dealType){
+                para.put("err","请选择支付方式");
+                return para;
+            }
+            para.put("tradeType",_dealType);
             String _summaryTextText = summaryText.getText();
             if (StringUtils.isBlank(_summaryTextText.trim())){
-                return null;
+                para.put("err","请填写摘要");
+                return para;
             }
-            List<TransactionInfoEntity> infoList = new ArrayList<>();
+            para.put("transactionAmount",_summaryTextText);
+            JSONArray array = new JSONArray();
             for (int index = 0;index < children.size();index++){
                 node = (HBox)children.get(index);
                 choiceBox = (ChoiceBox<DealDirection>) node.getChildren().get(1);
@@ -189,21 +226,25 @@ public class DeclareViewController implements Initializable {
                 // 校验金额是否合法
                 chargeField = (TextField) node.getChildren().get(3);
                 if (!InputFormatter.isNumber(chargeField.getText().trim())){
-                    return null;
+                    para.put("err","您填写的金额不合法");
+                    return para;
                 }
                 // 校验描述是否合法
                 descField = (TextField) node.getChildren().get(5);
                 if (StringUtils.isBlank(descField.getText().trim())){
-                    return null;
+                    para.put("err","请填写正确描述");
+                    return para;
                 }
-                infoList.add(new TransactionInfoEntity(choiceBox.getSelectionModel().getSelectedItem().getType(),Double.valueOf(chargeField.getText().trim()),descField.getText().trim()));
+                array.add(JSON.toJSON(new TransactionInfoEntity(choiceBox.getSelectionModel().getSelectedItem().getType(),Double.valueOf(chargeField.getText().trim()),descField.getText().trim())));
             }
-            return new TransactionListEntity(_summaryTextText.trim(), dealType.getSelectionModel().getSelectedItem(), infoList);
+            para.put("tradeDate",tradeDate.getValue().format(DateUtils.dateFormat));
+            para.put("infoList",array);
+            return para;
         } catch (Exception e) {
-            System.out.println("校验用户数据异常");
+            para.put("err","校验异常");
             e.printStackTrace();
         }
-        return null;
+        return para;
     }
 
 

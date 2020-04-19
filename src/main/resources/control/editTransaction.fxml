@@ -26,7 +26,7 @@
                     </padding>
                     <children>
                         <!--第1行-->
-                        <Label text="交易类别" textFill="#fff" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <Label text="交易方式" textFill="#fff" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                         <ChoiceBox fx:id="dealType" GridPane.rowIndex="0" GridPane.columnIndex="1"
                                    styleClass="choice-box"/>
 

@@ -39,5 +39,12 @@ public class SingValueTools {
         list.add(new DealDirection(2,"取出"));
         return list;
     }
+    public static String cellSerialDealDirection(int flog){
+        if (2 == flog){
+            return "取出";
+        }else{
+            return "存入";
+        }
+    }
 
 }

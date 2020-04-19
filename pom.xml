@@ -6,6 +6,7 @@
 
     <groupId>ac.cn.saya</groupId>
     <artifactId>gui-lab</artifactId>
+    <description> find ./ -type f -name ".DS_Store" -exec rm -rf {} \;</description>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 

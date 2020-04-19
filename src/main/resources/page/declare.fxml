@@ -24,6 +24,8 @@
                     <children>
                         <Label text="交易类别"/>
                         <ChoiceBox fx:id="dealType" styleClass="choice-box"/>
+                        <Label text="交易日期"/>
+                        <DatePicker fx:id="tradeDate" styleClass="date-picker" promptText="yyyy-MM-dd"/>
                         <Label text="交易摘要"/>
                         <TextField fx:id="summaryText" styleClass="general-input" prefWidth="240"/>
                         <Button styleClass="addButton" text="继续添加" onMouseClicked="#addSummaryLineHandleAction">

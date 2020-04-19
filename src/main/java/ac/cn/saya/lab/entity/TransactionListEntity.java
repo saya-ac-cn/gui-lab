@@ -69,8 +69,9 @@ public class TransactionListEntity implements Serializable {
     public TransactionListEntity() {
     }
 
-    public TransactionListEntity(String transactionAmount, TransactionTypeEntity tradeTypeEntity, List<TransactionInfoEntity> infoList) {
+    public TransactionListEntity(String transactionAmount,String tradeDate, TransactionTypeEntity tradeTypeEntity, List<TransactionInfoEntity> infoList) {
         this.transactionAmount = transactionAmount;
+        this.tradeDate = tradeDate;
         this.tradeTypeEntity = tradeTypeEntity;
         this.infoList = infoList;
     }

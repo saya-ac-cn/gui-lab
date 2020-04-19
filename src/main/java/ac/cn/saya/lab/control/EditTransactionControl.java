@@ -1,7 +1,11 @@
 package ac.cn.saya.lab.control;
 
+import ac.cn.saya.lab.api.RequestUrl;
+import ac.cn.saya.lab.controller.TransactionViewController;
+import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
 import ac.cn.saya.lab.tools.*;
+import com.alibaba.fastjson.JSONObject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -62,20 +66,30 @@ public class EditTransactionControl implements Initializable {
 
     private Parent _root;
 
+    private TransactionListEntity _line;
+
+    private TransactionViewController _paren;
+
     /**
      * 对外接受资源
      *
      * @param stage
      */
-    public void passedResource(Stage stage, Parent root) {
+    public void passedResource(Stage stage, Parent root, TransactionListEntity line,TransactionViewController paren) {
         _stage = stage;
         _root = root;
+        _line = line;
+        _paren = paren;
     }
 
     /**
      * 页面二次刷新，由外部触发，
      */
     public void secondRefresh() {
+        // 数据回显
+        dealType.getSelectionModel().select(_line.getTradeTypeEntity());
+        tradeDate.setValue(LocalDate.parse(_line.getTradeDate(),DateUtils.dateFormat));
+        summaryText.setText(_line.getTransactionAmount());
         _root.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
@@ -92,12 +106,15 @@ public class EditTransactionControl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 页面选择器初始化
         dealType.getItems().addAll(SingValueTools.getDealType());
-        dealType.getSelectionModel().selectFirst();//默认选中第一个选项
+        dealType.converterProperty().set(new TransactionTypeChoiceBox());
         summaryText.setTextFormatter(InputFormatter.stringLengthFormatte());
         // 设置开始时间
         tradeDate.setValue(LocalDate.now());
         tradeDate.setConverter(new DateConverter());
+        StringConverter<LocalDate> converter = new DateConverter();
+        tradeDate.setConverter(converter);
     }
 
     /**
@@ -114,15 +131,32 @@ public class EditTransactionControl implements Initializable {
      * @param event
      */
     public void handleSubmitPageAction(MouseEvent event){
+        // 用户选中的支付方式
+        Integer _dealType = dealType.getSelectionModel().getSelectedItem().getId();
+        if (-1 == _dealType){
+            errorLabel.setText("请选择交易方式");
+            return;
+        }
         String summary = summaryText.getText();
         if (StringUtils.isBlank(summary) || (summary = summary.trim()).length() <0){
             errorLabel.setText("请填写摘要");
             return;
-        }else {
-            errorLabel.setText(null);
         }
-        System.out.println();
-        System.out.println(tradeDate.getValue().format(DateUtils.dateFormat));
+        JSONObject para = new JSONObject();
+        para.put("tradeId",_line.getTradeId());
+        para.put("tradeType",_dealType);
+        para.put("tradeDate",tradeDate.getValue().format(DateUtils.dateFormat));
+        para.put("transactionAmount",summary);
+        Result<Object> requestResult = RequestUrl.updateTransaction(para);
+        if (ResultUtil.checkSuccess(requestResult)) {
+            // 关闭当前页面
+            _stage.close();
+            // 刷新父页面
+            _paren.getData(null);
+            NoticeUtils.show("处理结果", "修改成功");
+        }else {
+            NoticeUtils.show("处理结果",requestResult.getMsg());
+        }
     }
 
 }

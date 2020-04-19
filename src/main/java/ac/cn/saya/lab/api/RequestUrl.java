@@ -178,5 +178,110 @@ public class RequestUrl {
         return false;
     }
 
+    /**
+     * 财政申报
+     * @param parmar
+     * @return
+     */
+    public static Result<Object> applyTransaction(JSONObject parmar){
+        try {
+            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/api/financial/insertTransaction", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
+
+    /**
+     * 修改交易流水
+     * @param parmar
+     * @return
+     */
+    public static Result<Object> updateTransaction(JSONObject parmar){
+        try {
+            String resultStr = HttpRequestUtils.httpPut(prefixUrh+"/backend/api/financial/updateTransaction", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
+    /**
+     * 删除交易流水
+     * @param parmar
+     * @return
+     */
+    public static Result<Object> deleteTransaction(JSONObject parmar){
+        try {
+            String resultStr = HttpRequestUtils.httpDelete(prefixUrh+"/backend/api/financial/deleteTransaction", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
+    /**
+     * 获取流水明细
+     * @param parmar
+     * @return
+     */
+    public static Result<Object> getTransactionInfo(JSONObject parmar){
+        try {
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionInfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
+    /**
+     * 添加流水明细
+     * @param parmar
+     * @return
+     */
+    public static Result<Object> insertTransactioninfo(JSONObject parmar){
+        try {
+            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/api/financial/insertTransactioninfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
+    /**
+     * 修改流水明细
+     * @param parmar
+     * @return
+     */
+    public static Result<Object> updateTransactioninfo(JSONObject parmar){
+        try {
+            String resultStr = HttpRequestUtils.httpPut(prefixUrh+"/backend/api/financial/updateTransactioninfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
+    /**
+     * 删除流水明细
+     * @param parmar
+     * @return
+     */
+    public static Result<Object> deleteTransactioninfo(JSONObject parmar){
+        try {
+            String resultStr = HttpRequestUtils.httpDelete(prefixUrh+"/backend/api/financial/deleteTransactioninfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
 
 }

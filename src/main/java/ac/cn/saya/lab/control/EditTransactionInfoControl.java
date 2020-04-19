@@ -1,12 +1,14 @@
 package ac.cn.saya.lab.control;
 
 import ac.cn.saya.lab.GUIApplication;
+import ac.cn.saya.lab.api.RequestUrl;
+import ac.cn.saya.lab.controller.TransactionViewController;
 import ac.cn.saya.lab.entity.DealDirection;
 import ac.cn.saya.lab.entity.TransactionInfoEntity;
-import ac.cn.saya.lab.tools.InputFormatter;
-import ac.cn.saya.lab.tools.NoticeUtils;
-import ac.cn.saya.lab.tools.SingValueTools;
-import javafx.application.Platform;
+import ac.cn.saya.lab.tools.*;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,6 +25,8 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -81,11 +85,6 @@ public class EditTransactionInfoControl implements Initializable {
      */
     public Button editButton;
 
-    /**
-     * 底部关闭，提交按钮
-     */
-    @FXML
-    public Button closeButton, submitButton;
 
     /**
      * 存储外部传递的资源
@@ -93,6 +92,10 @@ public class EditTransactionInfoControl implements Initializable {
     private Stage _stage;
 
     private Parent _root;
+
+    private int _tradeId;
+
+    private TransactionViewController _parent;
 
     /**
      * 表格数据部分
@@ -116,7 +119,7 @@ public class EditTransactionInfoControl implements Initializable {
     private TransactionInfoEntity thisEditLine;
 
     @FXML
-    public TableColumn<TransactionInfoEntity, Integer> flog;
+    public TableColumn<TransactionInfoEntity, String> flog;
 
     @FXML
     public TableColumn<TransactionInfoEntity, Double> currencyNumber;
@@ -128,13 +131,28 @@ public class EditTransactionInfoControl implements Initializable {
     private TableColumn<TransactionInfoEntity, String> operateCol;
 
     /**
+     * 查询条件
+     */
+    private JSONObject queryCondition = new JSONObject();
+
+    /**
+     * 本页面执行添加、修改和删除次数，关闭时，判断是否需要刷新父页面
+     */
+    private int renewNum = 0;
+
+    /**
      * 对外接受资源
      *
      * @param stage
      */
-    public void passedResource(Stage stage, Parent root) {
+    public void passedResource(Stage stage, Parent root, int tradeId, TransactionViewController parent) {
         _stage = stage;
         _root = root;
+        _tradeId = tradeId;
+        _parent = parent;
+        queryCondition.put("nowPage",1);
+        queryCondition.put("pageSize",20);
+        queryCondition.put("tradeId",tradeId);
     }
 
 
@@ -151,14 +169,17 @@ public class EditTransactionInfoControl implements Initializable {
         addDescField.setTextFormatter(InputFormatter.stringLengthFormatte());
         editDescField.setTextFormatter(InputFormatter.stringLengthFormatte());
         // 初次进入时，修改功能禁用，只有触发单机表格行后才触发修改，修改成功后，再次进入禁用状态
-        setDisable(true);
+        setDisableInput(true);
         // 对于部分输入框，预先设置初值
         addChargeField.setText("0.0");
         editChargeField.setText("0.0");
-        addDescField.setText("详情");
-        editDescField.setText("详情");
+        addDescField.setText(null);
+        editDescField.setText(null);
         // 表格格式初始化
-        flog.setCellValueFactory(new PropertyValueFactory<TransactionInfoEntity, Integer>("flog"));
+        flog.setCellValueFactory((cell)->{
+            /// SimpleStringProperty(arg0.getValue(),"sd",arg0.getValue().getFirstName());
+            return new SimpleStringProperty(SingValueTools.cellSerialDealDirection(cell.getValue().getFlog()));
+        });
         currencyNumber.setCellValueFactory(new PropertyValueFactory<TransactionInfoEntity, Double>("currencyNumber"));
         currencyDetails.setCellValueFactory(new PropertyValueFactory<TransactionInfoEntity, String>("currencyDetails"));
         // 表格事件的初始化
@@ -188,7 +209,7 @@ public class EditTransactionInfoControl implements Initializable {
                         deleteLabel.setOnMouseClicked(me -> {
                             TransactionInfoEntity _line = this.getTableView().getItems().get(this.getIndex());
                             // 移除前判断删除的行数据是否为当前编辑行数据
-                            if (thisEditLine != null && _line.getId() == thisEditLine.getId()){
+                            if (thisEditLine != null && (_line.getId()).equals(thisEditLine.getId())){
                                 editDealDirection.getSelectionModel().selectFirst();
                                 editChargeField.setText("0.0");
                                 editDescField.setText("详情");
@@ -201,8 +222,13 @@ public class EditTransactionInfoControl implements Initializable {
                                     "确认",
                                     "您确认要删除该记录",
                                     e -> {
+                                        //data.remove(this.getIndex());
+                                        JSONObject para = new JSONObject();
+                                        para.put("id",_line.getId());
+                                        RequestUrl.deleteTransactioninfo(para);
+                                        getData();
+                                        renewNum++;
                                         stage.close();
-                                        data.remove(this.getIndex());
                                     }
                             );
 
@@ -214,7 +240,7 @@ public class EditTransactionInfoControl implements Initializable {
                             editChargeField.setText(String.valueOf(thisEditLine.getCurrencyNumber()));
                             editDescField.setText(thisEditLine.getCurrencyDetails());
                             // 此时底部的编辑框可以编辑
-                            setDisable(false);
+                            setDisableInput(false);
                         });
                     }
                 }
@@ -222,14 +248,13 @@ public class EditTransactionInfoControl implements Initializable {
             };
             return cell;
         });
-        Platform.runLater(() -> getData());
-
     }
 
     /**
      * 页面二次刷新，由外部触发，
      */
     public void secondRefresh() {
+        getData();
         _root.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
@@ -248,35 +273,101 @@ public class EditTransactionInfoControl implements Initializable {
      * 渲染表格
      */
     private void getData() {
-        // 数据查询
-        data.clear();
-        data.add(new TransactionInfoEntity(1, 1, 1.1, "测试"));
-        data.add(new TransactionInfoEntity(2, 2, 1.2, "测试"));
-        data.add(new TransactionInfoEntity(3, 3, 1.3, "测试"));
-        data.add(new TransactionInfoEntity(4, 1, 1.4, "测试"));
-        data.add(new TransactionInfoEntity(5, 2, 1.5, "测试"));
-        data.add(new TransactionInfoEntity(6, 3, 1.6, "测试"));
-        data.add(new TransactionInfoEntity(7, 1, 1.7, "测试"));
-        data.add(new TransactionInfoEntity(8, 2, 1.8, "测试"));
-        data.add(new TransactionInfoEntity(9, 3, 1.9, "测试"));
-        data.add(new TransactionInfoEntity(10, 1, 2.0, "测试"));
-        dataTableView.setItems(data);
+        Result<Object> requestResult = RequestUrl.getTransactionInfo(queryCondition);
+        if (ResultUtil.checkSuccess(requestResult)){
+            // 请求成功
+            JSONObject requestData = (JSONObject)requestResult.getData();
+            JSONArray grid = (JSONArray) requestData.getOrDefault("grid",null);
+            List<TransactionInfoEntity> gridList = JSONObject.parseArray(grid.toJSONString(), TransactionInfoEntity.class);
+            data.clear();
+            data.addAll(gridList);
+            dataTableView.setItems(data);
+        }
     }
 
     public void handleClosePageAction(MouseEvent event) {
         // 调用父容器传进来的stage进行操作
         _stage.close();
+        if (0 != renewNum){
+            _parent.getData(null);
+        }
     }
 
     /**
      * 禁用启用编辑组件
      * @param value
      */
-    private void setDisable(boolean value){
+    private void setDisableInput(boolean value){
         editDealDirection.setDisable(value);
         editChargeField.setDisable(value);
         editDescField.setDisable(value);
         editButton.setDisable(value);
+    }
+
+    public void handleAddInfoAction(){
+        Integer flog = addDealDirection.getSelectionModel().getSelectedItem().getType();
+        String currencyNumber = addChargeField.getText();
+        if (!InputFormatter.isNumber(currencyNumber)){
+            NoticeUtils.show("处理结果","您填写的金额不合法");
+            return;
+        }
+        // 校验描述是否合法
+        String currencyDetails = addDescField.getText();
+        if (StringUtils.isBlank(currencyDetails)){
+            NoticeUtils.show("处理结果","请填写正确描述");
+            return;
+        }
+        JSONObject parmar = new JSONObject();
+        parmar.put("flog",flog);
+        parmar.put("currencyNumber",currencyNumber);
+        parmar.put("currencyDetails",currencyDetails);
+        parmar.put("tradeId",_tradeId);
+        Result<Object> requestResult = RequestUrl.insertTransactioninfo(parmar);
+        if (ResultUtil.checkSuccess(requestResult)){
+            renewNum++;
+            getData();
+            thisEditLine = null;
+            NoticeUtils.show("处理结果","添加成功");
+            // 还原表单
+            addChargeField.setText("0.0");
+            addDescField.setText(null);
+        }else {
+            NoticeUtils.show("处理结果",requestResult.getMsg());
+        }
+    }
+
+    public void handleEditInfoAction(){
+        Integer flog = editDealDirection.getSelectionModel().getSelectedItem().getType();
+        String currencyNumber = editChargeField.getText();
+        if (!InputFormatter.isNumber(currencyNumber)){
+            NoticeUtils.show("处理结果","您填写的金额不合法");
+            return;
+        }
+        // 校验描述是否合法
+        String currencyDetails = editDescField.getText();
+        if (StringUtils.isBlank(currencyDetails)){
+            NoticeUtils.show("处理结果","请填写正确描述");
+            return;
+        }
+        JSONObject parmar = new JSONObject();
+        parmar.put("flog",flog);
+        parmar.put("currencyNumber",currencyNumber);
+        parmar.put("currencyDetails",currencyDetails);
+        parmar.put("tradeId",_tradeId);
+        parmar.put("id",thisEditLine.getId());
+        Result<Object> requestResult = RequestUrl.updateTransactioninfo(parmar);
+        if (ResultUtil.checkSuccess(requestResult)){
+            renewNum++;
+            getData();
+            thisEditLine = null;
+            NoticeUtils.show("处理结果","修改成功");
+            // 还原表单
+            editChargeField.setText("0.0");
+            editDescField.setText(null);
+            setDisableInput(true);
+        }else {
+            NoticeUtils.show("处理结果",requestResult.getMsg());
+        }
     }
 
 }

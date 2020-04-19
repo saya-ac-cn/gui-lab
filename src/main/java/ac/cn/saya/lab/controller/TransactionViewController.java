@@ -135,14 +135,9 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         tradeId.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Integer>("tradeId"));
         deposited.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("deposited"));
         expenditure.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("expenditure"));
-        transactionType.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<TransactionListEntity, String>, ObservableValue<String>>() {
-            @Override
-            public ObservableValue<String> call(TableColumn.CellDataFeatures<TransactionListEntity, String> arg0) {
-                // return new
-                // SimpleStringProperty(arg0.getValue(),"sd",arg0.getValue().getFirstName());
-                // //bean, bean的名称，值
-                return new SimpleStringProperty(arg0.getValue().getTradeTypeEntity().getTransactionType());
-            }
+        transactionType.setCellValueFactory((cell)->{
+            /// SimpleStringProperty(arg0.getValue(),"sd",arg0.getValue().getFirstName());
+            return new SimpleStringProperty(cell.getValue().getTradeTypeEntity().getTransactionType());
         });
         currencyNumber.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("currencyNumber"));
         transactionAmount.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, String>("transactionAmount"));
@@ -177,22 +172,27 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
                         box.getChildren().add(deleteLabel);
                         this.setGraphic(box);
                         moreLabel.setOnMouseClicked(me -> {
-                            openEditTransactionInfo();
+                            TransactionListEntity line = this.getTableView().getItems().get(this.getIndex());
+                            openEditTransactionInfo(line.getTradeId());
                         });
                         editLabel.setOnMouseClicked(me -> {
-                            openEditTransaction();
+                            TransactionListEntity line = this.getTableView().getItems().get(this.getIndex());
+                            openEditTransaction(line);
                         });
                         deleteLabel.setOnMouseClicked(me -> {
-                            TransactionListEntity user = this.getTableView().getItems().get(this.getIndex());
-                            System.out.println("删除 " + user.getTradeId() + " 的记录");
+                            TransactionListEntity line = this.getTableView().getItems().get(this.getIndex());
                             Stage stage = new Stage();
                             NoticeUtils.confirm(
                                     stage,
                                     "确认",
                                     "您确认要删除该记录",
                                     e -> {
+                                        /// data.remove(this.getIndex());
+                                        JSONObject para = new JSONObject();
+                                        para.put("tradeId",line.getTradeId());
+                                        RequestUrl.deleteTransaction(para);
+                                        getData(null);
                                         stage.close();
-                                        data.remove(this.getIndex());
                                     }
                             );
                         });
@@ -210,8 +210,10 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
      *
      * @param pageNum 用户想要得到的页
      */
-    private void getData(int pageNum) {
-        queryCondition.put("nowPage",pageNum);
+    public void getData(Integer pageNum) {
+        if (null != pageNum){
+            queryCondition.put("nowPage",pageNum);
+        }
         queryCondition.put("pageSize",10);
         // 请求数据查询
         Result<Object> requestResult = RequestUrl.getTransactionList(queryCondition);
@@ -250,7 +252,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
     /**
      * 打开修改交易明细页面
      */
-    private void openEditTransactionInfo() {
+    private void openEditTransactionInfo(int tradeId) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("control/editTransactionInfo.fxml"));
         Parent target = null;
@@ -269,7 +271,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         stage.setScene(scene);
         stage.setTitle("修改流水明细");
         // 资源传递是必须的，否则无法操作执行
-        controller.passedResource(stage,target);
+        controller.passedResource(stage,target,tradeId,this);
         stage.show();
         // 执行页面的二次渲染
         controller.secondRefresh();
@@ -278,7 +280,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
     /**
      * 打开修改交易页面
      */
-    private void openEditTransaction() {
+    private void openEditTransaction(TransactionListEntity line) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("control/editTransaction.fxml"));
         Parent target = null;
@@ -297,7 +299,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         stage.setScene(scene);
         stage.setTitle("修改流水");
         // 资源传递是必须的，否则无法操作执行
-        controller.passedResource(stage,target);
+        controller.passedResource(stage,target,line,this);
         stage.show();
         // 执行页面的二次渲染
         controller.secondRefresh();
