@@ -11,7 +11,7 @@
             <Image url="@../images/background.jpg"/>
         </ImageView>
         <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+                    AnchorPane.topAnchor="0.0">
             <padding>
                 <Insets top="60" left="60" right="60" bottom="20"/>
             </padding>
@@ -91,7 +91,8 @@
                                                GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionAction"/>
 
                                         <Label prefWidth="Infinity" alignment="CENTER" GridPane.columnIndex="1"
-                                               GridPane.rowIndex="2" onMouseClicked="#handleSwitchToTransactionForDayAction">
+                                               GridPane.rowIndex="2"
+                                               onMouseClicked="#handleSwitchToTransactionForDayAction">
                                             <graphic>
                                                 <ImageView fitHeight="30" preserveRatio="true">
                                                     <Image url="@../images/icon-baobiaomoban.png"/>
@@ -100,10 +101,12 @@
                                         </Label>
                                         <Label text="日度报表" styleClass="icon-text" prefWidth="Infinity"
                                                alignment="CENTER" GridPane.columnIndex="1"
-                                               GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionForDayAction"/>
+                                               GridPane.rowIndex="3"
+                                               onMouseClicked="#handleSwitchToTransactionForDayAction"/>
 
                                         <Label prefWidth="Infinity" alignment="CENTER" GridPane.columnIndex="2"
-                                               GridPane.rowIndex="2" onMouseClicked="#handleSwitchToTransactionForMonthAction">
+                                               GridPane.rowIndex="2"
+                                               onMouseClicked="#handleSwitchToTransactionForMonthAction">
                                             <graphic>
                                                 <ImageView fitHeight="30" preserveRatio="true">
                                                     <Image url="@../images/icon-yewubaobiao.png"/>
@@ -112,10 +115,12 @@
                                         </Label>
                                         <Label text="月度报表" styleClass="icon-text" prefWidth="Infinity"
                                                alignment="CENTER" GridPane.columnIndex="2"
-                                               GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionForMonthAction"/>
+                                               GridPane.rowIndex="3"
+                                               onMouseClicked="#handleSwitchToTransactionForMonthAction"/>
 
                                         <Label prefWidth="Infinity" alignment="CENTER" GridPane.columnIndex="3"
-                                               GridPane.rowIndex="2" onMouseClicked="#handleSwitchToTransactionForYearAction">
+                                               GridPane.rowIndex="2"
+                                               onMouseClicked="#handleSwitchToTransactionForYearAction">
                                             <graphic>
                                                 <ImageView fitHeight="30" preserveRatio="true">
                                                     <Image url="@../images/icon-yingshoubaobiao.png"/>
@@ -124,7 +129,8 @@
                                         </Label>
                                         <Label text="年度报表" styleClass="icon-text" prefWidth="Infinity"
                                                alignment="CENTER" GridPane.columnIndex="3"
-                                               GridPane.rowIndex="3" onMouseClicked="#handleSwitchToTransactionForYearAction"/>
+                                               GridPane.rowIndex="3"
+                                               onMouseClicked="#handleSwitchToTransactionForYearAction"/>
                                         <!--第2行菜单结束-->
                                     </children>
                                 </GridPane>
@@ -139,7 +145,8 @@
                 </VBox>
             </top>
             <center>
-                <AnchorPane fx:id="childPane" minWidth="1240" minHeight="500" prefWidth="Infinity" prefHeight="Infinity"/>
+                <AnchorPane fx:id="childPane" minWidth="1240" minHeight="500" prefWidth="Infinity"
+                            prefHeight="Infinity"/>
             </center>
         </BorderPane>
     </children>

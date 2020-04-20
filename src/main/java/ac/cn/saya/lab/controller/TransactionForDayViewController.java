@@ -100,7 +100,7 @@ public class TransactionForDayViewController extends AdvisorPagingAndDate implem
         queryCondition.put("nowPage",pageNum);
         queryCondition.put("pageSize",10);
         // 请求数据查询
-        Result<Object> requestResult = RequestUrl.getTransactionList(queryCondition);
+        Result<Object> requestResult = RequestUrl.totalTransactionForDay(queryCondition);
         if (ResultUtil.checkSuccess(requestResult)){
             // 请求成功
             JSONObject requestData = (JSONObject)requestResult.getData();
@@ -175,7 +175,7 @@ public class TransactionForDayViewController extends AdvisorPagingAndDate implem
         }
         // 得到输出文件路径
         String exportFilePath = file.getAbsolutePath().replaceAll(".xlsx", "")+".xlsx";
-        RequestUrl.downTransaction(outCondition,exportFilePath);
+        RequestUrl.downTransactionForDayExcel(outCondition,exportFilePath);
     }
 
 }
