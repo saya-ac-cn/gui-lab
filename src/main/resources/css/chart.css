@@ -1,0 +1,126 @@
+/**  
+   * @Title: chart
+   * @ProjectName gui-lab
+   * @Description: TODO
+   * @Author Administrator
+   * @Date: 2020/4/16 0016 09:16
+   * @Description: 数据图表样式
+   * 文档：https://docs.oracle.com/javafx/2/charts/css-styles.htm
+   * 公共属性：.chart，.chart-content，.chart-title，chart-legend
+   */
+/*设置背景图像*/
+.chart {
+    -fx-padding: 10;
+    -fx-background-color: transparent;
+}
+
+.chart-content {
+    -fx-padding: 30;
+}
+
+/*设置图表图例*/
+.chart-legend {
+    /*-fx-background-color: transparent;*/
+    /*-fx-padding: 16;*/
+    /*-fx-background-color: #fafad2;*/
+    /*-fx-stroke: #daa520;*/
+    -fx-background-color: #f1fafa;
+    -fx-opacity: 0.65;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 0;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #3861F4;
+}
+
+/*设置图表图的背景色*/
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #3278fa;
+}
+
+.chart-horizo​​ntal-grid-lines {
+    -fx-stroke: #3278fa;
+}
+
+/*更改刻度线和次要刻度线的颜色*/
+.axis {
+    -fx-font-size: 12;
+    -fx-tick-label-fill: #fff;
+    -fx-font-family: "Microsoft YaHei";
+    -fx-tick-length: 20;
+    -fx-minor-tick-length: 10;
+}
+
+.axis-label {
+    -fx-text-fill: #462300;
+}
+
+.axis-tick-mark {
+    -fx-stroke: #99CCFF;
+    -fx-stroke-width: 3;
+}
+
+.axis-minor-tick-mark {
+    -fx-stroke: #ccc;
+}
+
+/*在折线图中为三个系列设置替代颜色*/
+.chart-series-line {
+    -fx-stroke-width: 2px;
+    -fx-effect: null;
+}
+
+.default-color0.chart-series-line {-fx-stroke: #d87c7c;}
+.default-color1.chart-series-line {-fx-stroke: #919e8b;}
+.default-color2.chart-series-line {-fx-stroke: #d7ab82;}
+.default-color3.chart-series-line {-fx-stroke: #6e7074;}
+.default-color4.chart-series-line {-fx-stroke: #61a0a8;}
+.default-color5.chart-series-line {-fx-stroke: #efa18d;}
+.default-color6.chart-series-line {-fx-stroke: #787464;}
+.default-color7.chart-series-line {-fx-stroke: #cc7e63;}
+.default-color8.chart-series-line {-fx-stroke: #724e58;}
+.default-color9.chart-series-line {-fx-stroke: #4b565b;}
+
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+    -fx-stroke-width: 0;
+}
+
+/*更改文本元素的颜色*/
+.chart-title {
+    -fx-text-fill: #fff;
+    -fx-font-weight: bolder;
+    -fx-font-size: 14
+}
+
+/*饼图样式设置*/
+.default-color0.chart-pie {-fx-pie-color: #d87c7c; }
+.default-color1.chart-pie {-fx-pie-color: #919e8b; }
+.default-color2.chart-pie {-fx-pie-color: #d7ab82; }
+.default-color3.chart-pie {-fx-pie-color: #6e7074; }
+.default-color4.chart-pie {-fx-pie-color: #61a0a8; }
+.default-color5.chart-pie {-fx-pie-color: #efa18d; }
+.default-color6.chart-pie {-fx-pie-color: #787464; }
+.default-color7.chart-pie {-fx-pie-color: #cc7e63; }
+.default-color8.chart-pie {-fx-pie-color: #724e58; }
+.default-color9.chart-pie {-fx-pie-color: #4b565b; }
+
+.chart-pie-label-line {
+    -fx-stroke: #fff;
+    -fx-fill: #fff;
+}
+
+.chart-pie-label {
+    -fx-fill: #fff;
+    -fx-font-size: 12;
+}
+
+/*柱状图样式设置*/

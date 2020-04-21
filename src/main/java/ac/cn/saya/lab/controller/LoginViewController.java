@@ -82,8 +82,6 @@ public class LoginViewController implements Initializable {
                 mainApp.showHomeView((result.getData() == null)?null:(JSONObject)result.getData());
             }else {
                 errorInfoLabel.setText("用户名或密码错误");
-                userNameField.setText(null);
-                passwordField.setText(null);
             }
         }
     }

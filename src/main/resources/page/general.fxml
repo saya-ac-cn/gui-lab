@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Point3D?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.BarChart?>
 <AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+            xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/chart.css"
             fx:controller="ac.cn.saya.lab.controller.GeneralViewController">
     <children>
         <GridPane AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="10"
@@ -21,18 +28,75 @@
                 <RowConstraints vgrow="SOMETIMES" percentHeight="50"/>
             </rowConstraints>
             <children>
-                <LineChart fx:id="financialGraph" title="近6个月数据" prefWidth="Infinity" prefHeight="Infinity" alternativeColumnFillVisible="false" alternativeRowFillVisible="true"
-                           titleSide="TOP" style="-fx-background-color: none">
+                <!--数据比重图-->
+                <PieChart fx:id="percentPie" GridPane.rowIndex="0" GridPane.columnIndex="0" title="数据分布"
+                          prefWidth="Infinity" prefHeight="Infinity"
+                          titleSide="TOP"/>
+                <!--财务柱状图-->
+                <BarChart fx:id="financialBar" GridPane.rowIndex="0" GridPane.columnIndex="1" title="近6个月财务数据"
+                          prefWidth="Infinity" prefHeight="Infinity" alternativeColumnFillVisible="false"
+                          alternativeRowFillVisible="true"
+                          titleSide="TOP">
                     <xAxis>
-                        <CategoryAxis style="-fx-text-fill: #fff" prefHeight="20" prefWidth="Infinity" side="BOTTOM"/>
+                        <CategoryAxis prefHeight="20" prefWidth="Infinity" side="BOTTOM"/>
                     </xAxis>
                     <yAxis>
-                        <NumberAxis minorTickCount="5" prefHeight="Infinity" side="LEFT" tickLength="4.0" tickUnit="30.0"/>
+                        <NumberAxis minorTickCount="5" prefHeight="Infinity" side="LEFT" tickLength="4.0"
+                                    tickUnit="30.0"/>
                     </yAxis>
-                    <rotationAxis>
-                        <Point3D z="1.0"/>
-                    </rotationAxis>
+                </BarChart>
+                <!--活跃折线图-->
+                <LineChart fx:id="logLine" GridPane.rowIndex="0" GridPane.columnIndex="2" title="近6个月活跃情况"
+                           prefWidth="Infinity" prefHeight="Infinity" alternativeColumnFillVisible="false"
+                           alternativeRowFillVisible="true"
+                           titleSide="TOP">
+                    <xAxis>
+                        <CategoryAxis prefHeight="20" prefWidth="Infinity" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis minorTickCount="5" prefHeight="Infinity" side="LEFT" tickLength="4.0"
+                                    tickUnit="30.0"/>
+                    </yAxis>
                 </LineChart>
+                <!--动态发布折线图-->
+                <LineChart fx:id="newsLine" GridPane.rowIndex="1" GridPane.columnIndex="0" title="近6个月动态发布情况"
+                           prefWidth="Infinity" prefHeight="Infinity" alternativeColumnFillVisible="false"
+                           alternativeRowFillVisible="true"
+                           titleSide="TOP">
+                    <xAxis>
+                        <CategoryAxis prefHeight="20" prefWidth="Infinity" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis minorTickCount="5" prefHeight="Infinity" side="LEFT" tickLength="4.0"
+                                    tickUnit="30.0"/>
+                    </yAxis>
+                </LineChart>
+                <!--便笺柱状图-->
+                <BarChart fx:id="memoBar" GridPane.rowIndex="1" GridPane.columnIndex="1" title="近6个月便笺"
+                          prefWidth="Infinity" prefHeight="Infinity" alternativeColumnFillVisible="false"
+                          alternativeRowFillVisible="true"
+                          titleSide="TOP">
+                    <xAxis>
+                        <CategoryAxis prefHeight="20" prefWidth="Infinity" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis minorTickCount="5" prefHeight="Infinity" side="LEFT" tickLength="4.0"
+                                    tickUnit="30.0"/>
+                    </yAxis>
+                </BarChart>
+                <!--文件上传柱状图-->
+                <BarChart fx:id="uploadBar" GridPane.rowIndex="1" GridPane.columnIndex="2" title="近6个月文件上传"
+                          prefWidth="Infinity" prefHeight="Infinity" alternativeColumnFillVisible="false"
+                          alternativeRowFillVisible="true"
+                          titleSide="TOP">
+                    <xAxis>
+                        <CategoryAxis prefHeight="20" prefWidth="Infinity" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis minorTickCount="5" prefHeight="Infinity" side="LEFT" tickLength="4.0"
+                                    tickUnit="30.0"/>
+                    </yAxis>
+                </BarChart>
             </children>
         </GridPane>
     </children>
