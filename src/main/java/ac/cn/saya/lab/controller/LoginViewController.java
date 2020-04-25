@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
  * @Date: 2020-03-30 21:59
  * @Description:登录界面控制器
  */
-//界面控制器必须实现自接口Initializable
 public class LoginViewController implements Initializable {
 
     private GUIApplication mainApp;

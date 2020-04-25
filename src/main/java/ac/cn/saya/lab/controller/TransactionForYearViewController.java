@@ -41,12 +41,12 @@ public class TransactionForYearViewController extends PagingTools implements Ini
      * 表格
      */
     @FXML
-    public TableView<TransactionListEntity> dataTableView;
+    private TableView<TransactionListEntity> dataTableView;
 
     /**
      * 数据
      */
-    public ObservableList<TransactionListEntity> data = FXCollections.observableArrayList();
+    private ObservableList<TransactionListEntity> data = FXCollections.observableArrayList();
 
     /**
      * 存入

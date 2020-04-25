@@ -44,25 +44,25 @@ public class DeclareViewController implements Initializable {
      * 交易类别
      */
     @FXML
-    public ChoiceBox<TransactionTypeEntity> dealType;
+    private ChoiceBox<TransactionTypeEntity> dealType;
 
     /**
      * 交易时间
      */
     @FXML
-    public DatePicker tradeDate;
+    private DatePicker tradeDate;
 
     /**
      * 交易摘要
      */
     @FXML
-    public TextField summaryText;
+    private TextField summaryText;
 
     /**
      * 摘要明细容器
      */
     @FXML
-    public VBox summaryInfoVbox;
+    private VBox summaryInfoVbox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

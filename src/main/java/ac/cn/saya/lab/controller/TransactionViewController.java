@@ -7,35 +7,28 @@ import ac.cn.saya.lab.control.EditTransactionControl;
 import ac.cn.saya.lab.control.EditTransactionInfoControl;
 import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
-import ac.cn.saya.lab.entity.UserEntity;
 import ac.cn.saya.lab.tools.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Callback;
-import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,7 +128,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         tradeId.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Integer>("tradeId"));
         deposited.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("deposited"));
         expenditure.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("expenditure"));
-        transactionType.setCellValueFactory((cell)->{
+        transactionType.setCellValueFactory((cell) -> {
             /// SimpleStringProperty(arg0.getValue(),"sd",arg0.getValue().getFirstName());
             return new SimpleStringProperty(cell.getValue().getTradeTypeEntity().getTransactionType());
         });
@@ -189,7 +182,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
                                     e -> {
                                         /// data.remove(this.getIndex());
                                         JSONObject para = new JSONObject();
-                                        para.put("tradeId",line.getTradeId());
+                                        para.put("tradeId", line.getTradeId());
                                         RequestUrl.deleteTransaction(para);
                                         getData(null);
                                         stage.close();
@@ -211,16 +204,16 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
      * @param pageNum 用户想要得到的页
      */
     public void getData(Integer pageNum) {
-        if (null != pageNum){
-            queryCondition.put("nowPage",pageNum);
+        if (null != pageNum) {
+            queryCondition.put("nowPage", pageNum);
         }
-        queryCondition.put("pageSize",10);
+        queryCondition.put("pageSize", 10);
         // 请求数据查询
         Result<Object> requestResult = RequestUrl.getTransactionList(queryCondition);
-        if (ResultUtil.checkSuccess(requestResult)){
+        if (ResultUtil.checkSuccess(requestResult)) {
             // 请求成功
-            JSONObject requestData = (JSONObject)requestResult.getData();
-            JSONArray grid = (JSONArray) requestData.getOrDefault("grid",null);
+            JSONObject requestData = (JSONObject) requestResult.getData();
+            JSONArray grid = (JSONArray) requestData.getOrDefault("grid", null);
             List<TransactionListEntity> gridList = JSONObject.parseArray(grid.toJSONString(), TransactionListEntity.class);
             data.clear();
             data.addAll(gridList);
@@ -229,7 +222,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
             pageIndex = requestData.getInteger("pageNow");
             pageCount = requestData.getInteger("totalPage");
             displayTable(true);
-        }else {
+        } else {
             data.clear();
             dataTableView.setItems(data);
             displayTable(false);
@@ -271,7 +264,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         stage.setScene(scene);
         stage.setTitle("修改流水明细");
         // 资源传递是必须的，否则无法操作执行
-        controller.passedResource(stage,target,tradeId,this);
+        controller.passedResource(stage, target, tradeId, this);
         stage.show();
         // 执行页面的二次渲染
         controller.secondRefresh();
@@ -299,7 +292,7 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         stage.setScene(scene);
         stage.setTitle("修改流水");
         // 资源传递是必须的，否则无法操作执行
-        controller.passedResource(stage,target,line,this);
+        controller.passedResource(stage, target, line, this);
         stage.show();
         // 执行页面的二次渲染
         controller.secondRefresh();
@@ -308,23 +301,23 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
     /**
      * 搜索事件，触发搜索时，表示页面的筛选条件已经改变，需从第一页开始
      */
-    public void handleSearchAction(){
+    public void handleSearchAction() {
         queryCondition.clear();
         Integer _type = dealType.getSelectionModel().getSelectedItem().getId();
-        if (-1 != _type){
-            queryCondition.put("tradeType",_type);
+        if (-1 != _type) {
+            queryCondition.put("tradeType", _type);
         }
         String _beginTime = beginTime.getValue().format(DateUtils.dateFormat);
         String _endTime = endTime.getValue().format(DateUtils.dateFormat);
-        queryCondition.put("beginTime",_beginTime);
-        queryCondition.put("endTime",_endTime);
+        queryCondition.put("beginTime", _beginTime);
+        queryCondition.put("endTime", _endTime);
         getData(1);
     }
 
     /**
      * 重置搜索条件
      */
-    public void handleRestSearchAction(){
+    public void handleRestSearchAction() {
         // 清空后台的筛选条件
         queryCondition.clear();
         // 清空页面表单的筛选条件
@@ -337,28 +330,28 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
     /**
      * 导出
      */
-    public void handleOutAction(){
+    public void handleOutAction() {
         JSONObject outCondition = new JSONObject();
         Integer _type = dealType.getSelectionModel().getSelectedItem().getId();
-        if (-1 != _type){
-            outCondition.put("tradeType",_type);
+        if (-1 != _type) {
+            outCondition.put("tradeType", _type);
         }
         String _beginTime = beginTime.getValue().format(DateUtils.dateFormat);
         String _endTime = endTime.getValue().format(DateUtils.dateFormat);
-        outCondition.put("beginTime",_beginTime);
-        outCondition.put("endTime",_endTime);
+        outCondition.put("beginTime", _beginTime);
+        outCondition.put("endTime", _endTime);
         //得到用户导出的文件路径
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("报表导出");
         fileChooser.setInitialFileName("财务流水报表.xlsx");
         Stage s = new Stage();
         File file = fileChooser.showSaveDialog(s);
-        if(file==null) {
+        if (file == null) {
             return;
         }
         // 得到输出文件路径
-        String exportFilePath = file.getAbsolutePath().replaceAll(".xlsx", "")+".xlsx";
-        RequestUrl.downTransaction(outCondition,exportFilePath);
+        String exportFilePath = file.getAbsolutePath().replaceAll(".xlsx", "") + ".xlsx";
+        RequestUrl.downTransaction(outCondition, exportFilePath);
     }
-    
+
 }
