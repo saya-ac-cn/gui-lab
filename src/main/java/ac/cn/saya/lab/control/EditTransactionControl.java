@@ -42,7 +42,7 @@ public class EditTransactionControl implements Initializable {
      * 交易类别
      */
     @FXML
-    public ChoiceBox<TransactionTypeEntity> dealType;
+    private ChoiceBox<TransactionTypeEntity> dealType;
 
     /**
      * 交易摘要
