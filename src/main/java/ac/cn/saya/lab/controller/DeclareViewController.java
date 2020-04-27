@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -235,7 +236,7 @@ public class DeclareViewController implements Initializable {
                     para.put("err","请填写正确描述");
                     return para;
                 }
-                array.add(JSON.toJSON(new TransactionInfoEntity(choiceBox.getSelectionModel().getSelectedItem().getType(),Double.valueOf(chargeField.getText().trim()),descField.getText().trim())));
+                array.add(JSON.toJSON(new TransactionInfoEntity(choiceBox.getSelectionModel().getSelectedItem().getType(),new BigDecimal(chargeField.getText().trim()),descField.getText().trim())));
             }
             para.put("tradeDate",tradeDate.getValue().format(DateUtils.dateFormat));
             para.put("infoList",array);

@@ -1,6 +1,7 @@
 package ac.cn.saya.lab.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @Title: TransactionInfoEntity
@@ -33,7 +34,7 @@ public class TransactionInfoEntity implements Serializable {
     /**
      * '交易额',
      */
-    private Double currencyNumber;
+    private BigDecimal currencyNumber;
 
     /**
      * 交易明细
@@ -43,13 +44,13 @@ public class TransactionInfoEntity implements Serializable {
     public TransactionInfoEntity() {
     }
 
-    public TransactionInfoEntity(Integer flog, Double currencyNumber, String currencyDetails) {
+    public TransactionInfoEntity(Integer flog, BigDecimal currencyNumber, String currencyDetails) {
         this.flog = flog;
         this.currencyNumber = currencyNumber;
         this.currencyDetails = currencyDetails;
     }
 
-    public TransactionInfoEntity(Integer id, Integer flog, Double currencyNumber, String currencyDetails) {
+    public TransactionInfoEntity(Integer id, Integer flog, BigDecimal currencyNumber, String currencyDetails) {
         this.id = id;
         this.flog = flog;
         this.currencyNumber = currencyNumber;
@@ -80,11 +81,11 @@ public class TransactionInfoEntity implements Serializable {
         this.flog = flog;
     }
 
-    public Double getCurrencyNumber() {
+    public BigDecimal getCurrencyNumber() {
         return currencyNumber;
     }
 
-    public void setCurrencyNumber(Double currencyNumber) {
+    public void setCurrencyNumber(BigDecimal currencyNumber) {
         this.currencyNumber = currencyNumber;
     }
 

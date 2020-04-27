@@ -1,6 +1,7 @@
 package ac.cn.saya.lab.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class TransactionListEntity implements Serializable {
     /**
      * 存入
      */
-    private Double deposited;
+    private BigDecimal deposited;
     /**
      * 所属用户
      */
@@ -32,7 +33,7 @@ public class TransactionListEntity implements Serializable {
     /**
      * 支出
      */
-    private Double expenditure;
+    private BigDecimal expenditure;
     /**
      * 交易日
      */
@@ -44,7 +45,7 @@ public class TransactionListEntity implements Serializable {
     /**
      * 交易金额
      */
-    private Double currencyNumber;
+    private BigDecimal currencyNumber;
     /**
      * 摘要
      */
@@ -84,11 +85,11 @@ public class TransactionListEntity implements Serializable {
         this.tradeId = tradeId;
     }
 
-    public Double getDeposited() {
+    public BigDecimal getDeposited() {
         return deposited;
     }
 
-    public void setDeposited(Double deposited) {
+    public void setDeposited(BigDecimal deposited) {
         this.deposited = deposited;
     }
 
@@ -100,11 +101,11 @@ public class TransactionListEntity implements Serializable {
         this.source = source;
     }
 
-    public Double getExpenditure() {
+    public BigDecimal getExpenditure() {
         return expenditure;
     }
 
-    public void setExpenditure(Double expenditure) {
+    public void setExpenditure(BigDecimal expenditure) {
         this.expenditure = expenditure;
     }
 
@@ -124,11 +125,11 @@ public class TransactionListEntity implements Serializable {
         this.tradeType = tradeType;
     }
 
-    public Double getCurrencyNumber() {
+    public BigDecimal getCurrencyNumber() {
         return currencyNumber;
     }
 
-    public void setCurrencyNumber(Double currencyNumber) {
+    public void setCurrencyNumber(BigDecimal currencyNumber) {
         this.currencyNumber = currencyNumber;
     }
 
