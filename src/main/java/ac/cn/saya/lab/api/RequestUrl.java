@@ -284,4 +284,18 @@ public class RequestUrl {
         return ResultUtil.error(ResultEnum.ERROP);
     }
 
+    /**
+     * 获取仪表盘数据
+     * @return
+     */
+    public static Result<Object> getDoshBoard(){
+        try {
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/set/dashBoard", null, null, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
 }
