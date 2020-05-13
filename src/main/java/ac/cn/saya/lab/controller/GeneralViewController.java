@@ -1,5 +1,10 @@
 package ac.cn.saya.lab.controller;
 
+import ac.cn.saya.lab.api.RequestUrl;
+import ac.cn.saya.lab.tools.Result;
+import ac.cn.saya.lab.tools.ResultUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,6 +15,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.PieChart.Data;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -44,6 +50,14 @@ public class GeneralViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Result<Object> result = RequestUrl.getDoshBoard();
+        if (ResultUtil.checkSuccess(result)){
+            // 请求成功
+            JSONObject resultData = (JSONObject)result.getData();
+            System.out.println(resultData);
+        }else {
+
+        }
         initPercentPie();
         initFinancialBar();
         initLogLine();
