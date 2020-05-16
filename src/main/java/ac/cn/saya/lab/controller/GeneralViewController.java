@@ -15,6 +15,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.PieChart.Data;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -54,11 +55,28 @@ public class GeneralViewController implements Initializable {
         if (ResultUtil.checkSuccess(result)){
             // 请求成功
             JSONObject resultData = (JSONObject)result.getData();
+            /**
+             * 准备数据仪表盘的数据
+             */
+            int newsCount = (int)(resultData.getOrDefault("newsCount", 0));
+            int pictureCount = (int)(resultData.getOrDefault("pictureCount", 0));
+            int fileCount = (int)(resultData.getOrDefault("fileCount", 0));
+            int bookCount = (int)(resultData.getOrDefault("bookCount", 0));
+            int notesCount = (int)(resultData.getOrDefault("notesCount", 0));
+            int planCount = (int)(resultData.getOrDefault("planCount", 0));
+            List<Data> percentPieData = new ArrayList<>(6);
+            percentPieData.add(new PieChart.Data("动态", newsCount));
+            percentPieData.add(new PieChart.Data("图片", pictureCount));
+            percentPieData.add(new PieChart.Data("文件", fileCount));
+            percentPieData.add(new PieChart.Data("笔记", notesCount));
+            percentPieData.add(new PieChart.Data("计划", planCount));
+            percentPieData.add(new PieChart.Data("笔记簿", bookCount));
+            percentPieData.add(new PieChart.Data("动态", newsCount));
+            initPercentPie(percentPieData);
             System.out.println(resultData);
         }else {
-
+            initPercentPie(null);
         }
-        initPercentPie();
         initFinancialBar();
         initLogLine();
         initNewsLine();
@@ -69,10 +87,13 @@ public class GeneralViewController implements Initializable {
     /**
      * 数据比重饼图初始化
      */
-    private void initPercentPie(){
+    private void initPercentPie(List<Data> percentPieData){
         ObservableList<Data> percentData = FXCollections.observableArrayList();
-        percentData.addAll(new PieChart.Data("java", 17.56),
-                new PieChart.Data("JavaFx", 31.37));
+        if (null == percentData){
+            percentData.addAll(new PieChart.Data("无", 0));
+        }else {
+            percentData.addAll(percentPieData);
+        }
         percentPie.setData(percentData);
     }
 
