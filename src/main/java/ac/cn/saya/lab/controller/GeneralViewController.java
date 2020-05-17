@@ -73,6 +73,25 @@ public class GeneralViewController implements Initializable {
             percentPieData.add(new PieChart.Data("笔记簿", bookCount));
             percentPieData.add(new PieChart.Data("动态", newsCount));
             initPercentPie(percentPieData);
+            /**
+             * 构建财政数据
+             */
+            JSONArray financial = (JSONArray) resultData.getOrDefault("financial6",null);
+            if (null == financial || financial.isEmpty()){
+
+            }else {
+                for (Object item:financial) {
+                    JSONObject jsonObject = (JSONObject) item;
+                    jsonObject.getString("describe");
+                }
+            }
+            /**
+             * 构造3个数据，存入，支出，总额
+             */
+            "deposited": 4137.56,
+                    "expenditure": 630.49,
+                    "tradeDate": "2018-09",
+                    "currencyNumber": 5771.05
             System.out.println(resultData);
         }else {
             initPercentPie(null);
@@ -89,7 +108,7 @@ public class GeneralViewController implements Initializable {
      */
     private void initPercentPie(List<Data> percentPieData){
         ObservableList<Data> percentData = FXCollections.observableArrayList();
-        if (null == percentData){
+        if (null == percentPieData){
             percentData.addAll(new PieChart.Data("无", 0));
         }else {
             percentData.addAll(percentPieData);
