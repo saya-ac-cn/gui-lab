@@ -194,6 +194,20 @@ public class DateUtils {
         return greetText;
     }
 
+    /**
+     * 返回最近6个月的日期，不含当前月
+     * @return
+     */
+    public static String [] getHalfYearData(){
+        LocalDate now = LocalDate.now();
+        String[] dateArray = new String[6];
+        for (int i = 1; i <= 6; i++){
+            now = now.minusMonths(1);
+            dateArray[6-i] = now.format(monthFormat);
+        }
+        return dateArray;
+    }
+
     public static void main(String[] args) {
         String datetime = DateUtils.getCurrentDateTime(DateUtils.dateTimeFormat);
         System.out.println("now-date:"+datetime);
@@ -203,6 +217,10 @@ public class DateUtils {
         System.out.println("lastDayOfMonth:"+lastDayOfMonth);
         System.out.println("本月天数:"+DateUtils.getLengthOfMonth("2019-10-20"));
         System.out.println("本月第一天是:"+getFirstDayWeek("2019-10-20"));
+        String[] halfYearData = getHalfYearData();
+        for (String item:halfYearData) {
+            System.out.println(item);
+        }
     }
 
 }
