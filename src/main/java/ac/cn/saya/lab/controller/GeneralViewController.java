@@ -120,13 +120,27 @@ public class GeneralViewController implements Initializable {
                 }
                 initLogLine(log);
             }
+            /**
+             * 动态发布数初始化
+             */
+            LineChart.Series<String, Number> news = new LineChart.Series<String, Number>();
+            JSONObject news6 = (JSONObject) resultData.getOrDefault("news6", null);
+            if (null == news6 || news6.isEmpty()){
+                initNewsLine(null);
+            }else {
+                Set<String> keySet = news6.keySet();
+                for (String date:keySet) {
+                    news.getData().add(new XYChart.Data<String, Number>(date, news6.getIntValue(date)));
+                }
+                initNewsLine(news);
+            }
             System.out.println(resultData);
         } else {
             initPercentPie(null);
             initFinancialBar(null,null,null);
             initLogLine(null);
+            initNewsLine(null);
         }
-        initNewsLine();
         initMemoBar();
         initUploadBar();
     }
@@ -190,16 +204,17 @@ public class GeneralViewController implements Initializable {
     }
 
 
-    private void initNewsLine() {
+    private void initNewsLine(LineChart.Series<String, Number> news) {
         ObservableList<XYChart.Series<String, Number>> newsLineData = FXCollections.observableArrayList();
-        LineChart.Series<String, Number> news = new LineChart.Series<String, Number>();
+        if (null == news){
+            news = new LineChart.Series<String, Number>();
+            // 重新构造数据
+            String[] halfYearData = DateUtils.getHalfYearData();
+            for (String item:halfYearData) {
+                news.getData().add(new XYChart.Data<String, Number>(item, 0));
+            }
+        }
         news.setName("发布数");
-        news.getData().add(new XYChart.Data<String, Number>("1", 40));
-        news.getData().add(new XYChart.Data<String, Number>("2", 80));
-        news.getData().add(new XYChart.Data<String, Number>("3", 100));
-        news.getData().add(new XYChart.Data<String, Number>("4", 90));
-        news.getData().add(new XYChart.Data<String, Number>("5", 110));
-        news.getData().add(new XYChart.Data<String, Number>("6", 70));
         newsLineData.add(news);
         newsLine.setData(newsLineData);
         newsLine.createSymbolsProperty();
