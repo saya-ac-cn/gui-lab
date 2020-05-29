@@ -134,6 +134,20 @@ public class GeneralViewController implements Initializable {
                 }
                 initNewsLine(news);
             }
+            /**
+             * 便笺图表
+             */
+            XYChart.Series<String, Number> memo = new XYChart.Series<>();
+            JSONObject memoJson = (JSONObject) resultData.getOrDefault("memo", null);
+            if (null == memoJson || memoJson.isEmpty()){
+                initMemoBar(null);
+            }else {
+                Set<String> keySet = memoJson.keySet();
+                for (String date:keySet) {
+                    memo.getData().add(new XYChart.Data<>(date, memoJson.getIntValue(date)));
+                }
+                initMemoBar(memo);
+            }
             System.out.println(resultData);
         } else {
             initPercentPie(null);
@@ -141,7 +155,6 @@ public class GeneralViewController implements Initializable {
             initLogLine(null);
             initNewsLine(null);
         }
-        initMemoBar();
         initUploadBar();
     }
 
@@ -223,15 +236,16 @@ public class GeneralViewController implements Initializable {
     /**
      * 便笺柱状图初始化
      */
-    private void initMemoBar() {
-        XYChart.Series<String, Number> memo = new XYChart.Series<>();
+    private void initMemoBar(XYChart.Series<String, Number> memo) {
+        if (null == memo){
+            memo = new XYChart.Series<>();
+            // 重新构造数据
+            String[] halfYearData = DateUtils.getHalfYearData();
+            for (String item:halfYearData) {
+                memo.getData().add(new XYChart.Data<String, Number>(item, 0));
+            }
+        }
         memo.setName("发布数");
-        memo.getData().add(new XYChart.Data<>("1月", 1.0));
-        memo.getData().add(new XYChart.Data<>("2月", 3.0));
-        memo.getData().add(new XYChart.Data<>("3月", 5.0));
-        memo.getData().add(new XYChart.Data<>("4月", 5.0));
-        memo.getData().add(new XYChart.Data<>("5月", 3.0));
-        memo.getData().add(new XYChart.Data<>("6月", 4.0));
         ObservableList<XYChart.Series<String, Number>> memoData = FXCollections.observableArrayList();
         memoData.add(memo);
         memoBar.setData(memoData);
