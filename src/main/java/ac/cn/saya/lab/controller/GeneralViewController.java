@@ -19,10 +19,7 @@ import javafx.scene.chart.PieChart.Data;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @Title: GeneralViewController
@@ -106,6 +103,8 @@ public class GeneralViewController implements Initializable {
                 }
                 initFinancialBar(saveData,takeData,totalData);
             }
+            // 临时的key，用于将object转换成key
+            String listKey = null;
             /**
              * 活跃情况折线图初始化
              */
@@ -115,8 +114,11 @@ public class GeneralViewController implements Initializable {
                 initLogLine(null);
             }else {
                 Set<String> keySet = log6.keySet();
-                for (String date:keySet) {
-                    log.getData().add(new XYChart.Data<String, Number>(date, log6.getIntValue(date)));
+                Object[] array = keySet.toArray();
+                Arrays.sort(array);
+                for(Object date:array){
+                    listKey= String.valueOf(date);
+                    log.getData().add(new XYChart.Data<String, Number>(listKey, log6.getIntValue(listKey)));
                 }
                 initLogLine(log);
             }
@@ -129,8 +131,11 @@ public class GeneralViewController implements Initializable {
                 initNewsLine(null);
             }else {
                 Set<String> keySet = news6.keySet();
-                for (String date:keySet) {
-                    news.getData().add(new XYChart.Data<String, Number>(date, news6.getIntValue(date)));
+                Object[] array = keySet.toArray();
+                Arrays.sort(array);
+                for(Object date:array){
+                    listKey= String.valueOf(date);
+                    news.getData().add(new XYChart.Data<String, Number>(listKey, news6.getIntValue(listKey)));
                 }
                 initNewsLine(news);
             }
@@ -138,15 +143,35 @@ public class GeneralViewController implements Initializable {
              * 便笺图表
              */
             XYChart.Series<String, Number> memo = new XYChart.Series<>();
-            JSONObject memoJson = (JSONObject) resultData.getOrDefault("memo", null);
+            JSONObject memoJson = (JSONObject) resultData.getOrDefault("memo6", null);
             if (null == memoJson || memoJson.isEmpty()){
                 initMemoBar(null);
             }else {
                 Set<String> keySet = memoJson.keySet();
-                for (String date:keySet) {
-                    memo.getData().add(new XYChart.Data<>(date, memoJson.getIntValue(date)));
+                Object[] array = keySet.toArray();
+                Arrays.sort(array);
+                for(Object date:array){
+                    listKey= String.valueOf(date);
+                    memo.getData().add(new XYChart.Data<>(listKey, memoJson.getIntValue(listKey)));
                 }
                 initMemoBar(memo);
+            }
+            /**
+             * 文件上传图表
+             */
+            XYChart.Series<String, Number> files6 = new XYChart.Series<>();
+            JSONObject filesJson = (JSONObject) resultData.getOrDefault("files6", null);
+            if (null == filesJson || filesJson.isEmpty()){
+                initUploadBar(null);
+            }else {
+                Set<String> keySet = filesJson.keySet();
+                Object[] array = keySet.toArray();
+                Arrays.sort(array);
+                for(Object date:array){
+                    listKey= String.valueOf(date);
+                    files6.getData().add(new XYChart.Data<>(listKey, filesJson.getIntValue(listKey)));
+                }
+                initUploadBar(files6);
             }
             System.out.println(resultData);
         } else {
@@ -154,8 +179,8 @@ public class GeneralViewController implements Initializable {
             initFinancialBar(null,null,null);
             initLogLine(null);
             initNewsLine(null);
+            initUploadBar(null);
         }
-        initUploadBar();
     }
 
     /**
@@ -245,7 +270,7 @@ public class GeneralViewController implements Initializable {
                 memo.getData().add(new XYChart.Data<String, Number>(item, 0));
             }
         }
-        memo.setName("发布数");
+        memo.setName("便笺数");
         ObservableList<XYChart.Series<String, Number>> memoData = FXCollections.observableArrayList();
         memoData.add(memo);
         memoBar.setData(memoData);
@@ -254,15 +279,16 @@ public class GeneralViewController implements Initializable {
     /**
      * 文件上传柱状图初始化
      */
-    private void initUploadBar() {
-        XYChart.Series<String, Number> upload = new XYChart.Series<>();
+    private void initUploadBar(XYChart.Series<String, Number> upload) {
+        if (null == upload){
+            upload = new XYChart.Series<>();
+            // 重新构造数据
+            String[] halfYearData = DateUtils.getHalfYearData();
+            for (String item:halfYearData) {
+                upload.getData().add(new XYChart.Data<String, Number>(item, 0));
+            }
+        }
         upload.setName("上传数");
-        upload.getData().add(new XYChart.Data<>("1月", 1.0));
-        upload.getData().add(new XYChart.Data<>("2月", 3.0));
-        upload.getData().add(new XYChart.Data<>("3月", 5.0));
-        upload.getData().add(new XYChart.Data<>("4月", 5.0));
-        upload.getData().add(new XYChart.Data<>("5月", 3.0));
-        upload.getData().add(new XYChart.Data<>("6月", 4.0));
         ObservableList<XYChart.Series<String, Number>> uploadData = FXCollections.observableArrayList();
         uploadData.add(upload);
         uploadBar.setData(uploadData);

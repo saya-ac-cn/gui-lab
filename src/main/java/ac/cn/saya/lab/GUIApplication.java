@@ -43,7 +43,9 @@ public class GUIApplication extends Application {
      */
     private Scene scene;
 
-    // 定义偏移量，用于处理窗口移动
+    /**
+     * 定义偏移量，用于处理窗口移动
+     */
     private double xOffset = 0;
     private double yOffset = 0;
 
