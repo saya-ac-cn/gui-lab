@@ -2,6 +2,7 @@ package ac.cn.saya.lab.tools;
 
 import ac.cn.saya.lab.GUIApplication;
 import javafx.event.EventHandler;
+import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;

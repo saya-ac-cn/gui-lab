@@ -38,7 +38,7 @@ public class RequestUrl {
      */
     public static Result<Object> login(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/login", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/login/swing", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();

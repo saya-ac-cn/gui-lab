@@ -22,6 +22,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import com.alibaba.fastjson.JSON;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
@@ -641,6 +643,13 @@ public class HttpRequestUtils {
                 String locationUrl = response.getLastHeader("Location").getValue();
                 return getResult(new HttpPost(locationUrl), timeOut, isStream, clientContext);
             }
+            if (401 == respCode){
+                // 鉴权失败
+                Platform.runLater(() -> {
+                    NoticeUtils.show("操作提示","登录失效，请重新登录");
+                });
+                return "{\"code\":-7,\"msg\":\"请登录\"}";
+            }
             // 正确响应
             if (200 == respCode) {
                 // 获得响应实体
@@ -659,32 +668,71 @@ public class HttpRequestUtils {
                         sb.append("-1");
                     }
                 }
-
             }
+            return sb == null ? RESULT : ("".equals(sb.toString().trim()) ? "-1" : sb.toString());
         } catch (ConnectionPoolTimeoutException e) {
-            System.err.println("从连接池获取连接超时!!!");
+            /// System.err.println("从连接池获取连接超时!!!");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","获取连接资源超时，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5001,\"msg\":\"从连接池获取连接超时\"}";
         } catch (SocketTimeoutException e) {
-            System.err.println("响应超时");
+            /// System.err.println("响应超时");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","响应超时，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5002,\"msg\":\"响应超时\"}";
         } catch (ConnectTimeoutException e) {
-            System.err.println("请求超时");
+            /// System.err.println("请求超时");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","请求超时，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5003,\"msg\":\"请求超时\"}";
         } catch (ClientProtocolException e) {
-            System.err.println("http协议错误");
+            /// System.err.println("http协议错误");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","http协议错误，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5004,\"msg\":\"http协议错误\"}";
         } catch (UnsupportedEncodingException e) {
-            System.err.println("不支持的字符编码");
+            /// System.err.println("不支持的字符编码");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","不支持的字符编码，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5005,\"msg\":\"不支持的字符编码\"}";
         } catch (UnsupportedOperationException e) {
-            System.err.println("不支持的请求操作");
+            /// System.err.println("不支持的请求操作");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","不支持的请求操作，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5006,\"msg\":\"不支持的请求操作\"}";
         } catch (ParseException e) {
-            System.err.println("解析错误");
+            /// System.err.println("解析错误");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","解析错误，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5007,\"msg\":\"解析错误\"}";
         } catch (IOException e) {
-            System.err.println("IO错误");
+            /// System.err.println("IO错误");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","文件流异常，请稍后重试");
+            });
             e.printStackTrace();
+            return "{\"code\":-5008,\"msg\":\"文件流异常\"}";
+        } catch (Exception e) {
+            /// System.err.println("其它错误");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","接口请求错误，请稍后重试");
+            });
+            e.printStackTrace();
+            return "{\"code\":-5009,\"msg\":\"接口请求错误\"}";
         } finally {
             if (null != response) {
                 try {
@@ -694,9 +742,7 @@ public class HttpRequestUtils {
                     e.printStackTrace();
                 }
             }
-
         }
-        return sb == null ? RESULT : ("".equals(sb.toString().trim()) ? "-1" : sb.toString());
     }
 
     /**
