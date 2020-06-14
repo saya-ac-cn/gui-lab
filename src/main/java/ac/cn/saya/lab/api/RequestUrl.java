@@ -10,7 +10,7 @@ import java.io.UnsupportedEncodingException;
  * @Title: RequestUrl
  * @ProjectName gui-lab
  * @Description: TODO
- * @Author Administrator
+ * @Author saya
  * @Date: 2020/3/31 0031 10:32
  * @Description:
  */
@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 public class RequestUrl {
 
     public static final String prefixUrh= "http://127.0.0.1:8080";
+    //public static final String prefixUrh= "http://lab.saya.ac.cn";
 
     /**
      * 检查请求是否成功
