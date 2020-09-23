@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 public class RequestUrl {
 
     public static final String prefixUrh= "http://127.0.0.1:8080";
-    //public static final String prefixUrh= "http://lab.saya.ac.cn";
+    //public static final String prefixUrh= "http://laboratory.saya.ac.cn";
 
     /**
      * 检查请求是否成功
@@ -69,6 +69,20 @@ public class RequestUrl {
     public static Result<Object> getTransactionType(){
         try {
             String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionType", null, null, 60000, false, HttpRequestUtils.getClientContext());
+            return JSON.parseObject(resultStr, Result.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResultUtil.error(ResultEnum.ERROP);
+    }
+
+    /**
+     * 获取交易摘要
+     * @return
+     */
+    public static Result<Object> getTransactionAmount(){
+        try {
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionAmount", null, null, 60000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();

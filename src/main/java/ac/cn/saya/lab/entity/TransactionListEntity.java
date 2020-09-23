@@ -49,7 +49,7 @@ public class TransactionListEntity implements Serializable {
     /**
      * 摘要
      */
-    private String transactionAmount;
+    private Integer transactionAmount;
     /**
      * 创建时间
      */
@@ -67,10 +67,15 @@ public class TransactionListEntity implements Serializable {
      */
     private List<TransactionInfoEntity> infoList;
 
+    /**
+     * 摘要
+     */
+    private TransactionAmountEntity tradeAmountEntity;
+
     public TransactionListEntity() {
     }
 
-    public TransactionListEntity(String transactionAmount,String tradeDate, TransactionTypeEntity tradeTypeEntity, List<TransactionInfoEntity> infoList) {
+    public TransactionListEntity(Integer transactionAmount,String tradeDate, TransactionTypeEntity tradeTypeEntity, List<TransactionInfoEntity> infoList) {
         this.transactionAmount = transactionAmount;
         this.tradeDate = tradeDate;
         this.tradeTypeEntity = tradeTypeEntity;
@@ -133,11 +138,11 @@ public class TransactionListEntity implements Serializable {
         this.currencyNumber = currencyNumber;
     }
 
-    public String getTransactionAmount() {
+    public Integer getTransactionAmount() {
         return transactionAmount;
     }
 
-    public void setTransactionAmount(String transactionAmount) {
+    public void setTransactionAmount(Integer transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
 
@@ -171,5 +176,13 @@ public class TransactionListEntity implements Serializable {
 
     public void setInfoList(List<TransactionInfoEntity> infoList) {
         this.infoList = infoList;
+    }
+
+    public TransactionAmountEntity getTradeAmountEntity() {
+        return tradeAmountEntity;
+    }
+
+    public void setTradeAmountEntity(TransactionAmountEntity tradeAmountEntity) {
+        this.tradeAmountEntity = tradeAmountEntity;
     }
 }
