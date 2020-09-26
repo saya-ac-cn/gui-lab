@@ -36,8 +36,8 @@
 
                         <!--第3行-->
                         <Label text="交易摘要" textFill="#fff" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                        <TextField fx:id="summaryText" GridPane.rowIndex="2" GridPane.columnIndex="1"
-                                   styleClass="general-input"/>
+                        <ChoiceBox fx:id="dealAmount" GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                   styleClass="choice-box"/>
 
                         <Label fx:id="errorLabel" textFill="#5b317d" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
 

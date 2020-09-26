@@ -2,9 +2,8 @@ package ac.cn.saya.lab.controller;
 
 import ac.cn.saya.lab.GUIApplication;
 import ac.cn.saya.lab.api.RequestUrl;
-import ac.cn.saya.lab.tools.Result;
-import ac.cn.saya.lab.tools.ResultUtil;
-import ac.cn.saya.lab.tools.StringUtils;
+import ac.cn.saya.lab.control.ProgressFrom;
+import ac.cn.saya.lab.tools.*;
 import com.alibaba.fastjson.JSONObject;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,6 +14,8 @@ import javafx.scene.image.ImageView;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * @Title: LoginViewController
@@ -75,13 +76,28 @@ public class LoginViewController implements Initializable {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("user",userNameField.getText());
             jsonObject.put("password",passwordField.getText());
-            Result<Object> result = RequestUrl.login(jsonObject);
-            if (ResultUtil.checkSuccess(result)){
-                //显示主界面
-                mainApp.showHomeView((result.getData() == null)?null:(JSONObject)result.getData());
-            }else {
-                errorInfoLabel.setText("用户名或密码错误");
-            }
+
+            AsyncRequestUtils task = new AsyncRequestUtils(jsonObject, (parmar) -> RequestUrl.login(parmar));
+            task.valueProperty().addListener((observable,oldValue,newValue)->{
+                if (task.getFinishStatus()){
+                    // 执行完成
+                    Result<Object> result = null;
+                    try {
+                        result = task.get();
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    if (ResultUtil.checkSuccess(result)){
+                        //显示主界面
+                        mainApp.showHomeView((result.getData() == null)?null:(JSONObject)result.getData());
+                    }else {
+                        NoticeUtils.show("错误",result.getMsg());
+                        errorInfoLabel.setText("用户名或密码错误");
+                    }
+                }
+            });
+            ProgressFrom progressFrom = new ProgressFrom(task,GUIApplication.getStage());
+            progressFrom.activateProgressBar();
         }
     }
 

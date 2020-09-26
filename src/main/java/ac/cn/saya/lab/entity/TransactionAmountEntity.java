@@ -70,6 +70,25 @@ public class TransactionAmountEntity implements Serializable {
     }
 
     @Override
+    public boolean equals(Object obj){
+        if(obj == null){
+            return false;
+        }else {
+            if(this.getClass() == obj.getClass()){
+                TransactionAmountEntity u = (TransactionAmountEntity) obj;
+                if(this.getId().equals(u.getId())){
+                    return true;
+                }else{
+                    return false;
+                }
+
+            }else{
+                return false;
+            }
+        }
+    }
+
+    @Override
     public String toString() {
         return "交易编号：" + id + ", 摘要描述：'" + tag;
     }

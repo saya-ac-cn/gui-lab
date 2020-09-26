@@ -1,10 +1,7 @@
 package ac.cn.saya.lab.tools;
 
 import java.io.*;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -719,20 +716,27 @@ public class HttpRequestUtils {
             });
             e.printStackTrace();
             return "{\"code\":-5007,\"msg\":\"解析错误\"}";
-        } catch (IOException e) {
+        } catch (ConnectException e) {
+            /// System.err.println("IO错误");
+            Platform.runLater(() -> {
+                NoticeUtils.show("操作提示","服务器连接异常，请稍后重试");
+            });
+            e.printStackTrace();
+            return "{\"code\":-5008,\"msg\":\"文件流异常\"}";
+        }catch (IOException e) {
             /// System.err.println("IO错误");
             Platform.runLater(() -> {
                 NoticeUtils.show("操作提示","文件流异常，请稍后重试");
             });
             e.printStackTrace();
-            return "{\"code\":-5008,\"msg\":\"文件流异常\"}";
+            return "{\"code\":-5009,\"msg\":\"文件流异常\"}";
         } catch (Exception e) {
             /// System.err.println("其它错误");
             Platform.runLater(() -> {
                 NoticeUtils.show("操作提示","接口请求错误，请稍后重试");
             });
             e.printStackTrace();
-            return "{\"code\":-5009,\"msg\":\"接口请求错误\"}";
+            return "{\"code\":-5010,\"msg\":\"接口请求错误\"}";
         } finally {
             if (null != response) {
                 try {

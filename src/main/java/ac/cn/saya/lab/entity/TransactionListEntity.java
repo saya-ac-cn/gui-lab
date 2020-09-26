@@ -72,6 +72,7 @@ public class TransactionListEntity implements Serializable {
      */
     private TransactionAmountEntity tradeAmountEntity;
 
+
     public TransactionListEntity() {
     }
 

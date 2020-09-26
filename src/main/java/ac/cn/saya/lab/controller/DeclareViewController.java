@@ -2,10 +2,7 @@ package ac.cn.saya.lab.controller;
 
 import ac.cn.saya.lab.GUIApplication;
 import ac.cn.saya.lab.api.RequestUrl;
-import ac.cn.saya.lab.entity.DealDirection;
-import ac.cn.saya.lab.entity.TransactionInfoEntity;
-import ac.cn.saya.lab.entity.TransactionListEntity;
-import ac.cn.saya.lab.entity.TransactionTypeEntity;
+import ac.cn.saya.lab.entity.*;
 import ac.cn.saya.lab.tools.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -48,16 +45,16 @@ public class DeclareViewController implements Initializable {
     private ChoiceBox<TransactionTypeEntity> dealType;
 
     /**
+     * 交易摘要
+     */
+    @FXML
+    private ChoiceBox<TransactionAmountEntity> dealAmount;
+
+    /**
      * 交易时间
      */
     @FXML
     private DatePicker tradeDate;
-
-    /**
-     * 交易摘要
-     */
-    @FXML
-    private TextField summaryText;
 
     /**
      * 摘要明细容器
@@ -67,11 +64,16 @@ public class DeclareViewController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 页面选择器初始化
+        // 交易类别选择器初始化
         dealType.getItems().addAll(SingValueTools.getDealType());
         dealType.converterProperty().set(new TransactionTypeChoiceBox());
         //默认选中第一个选项
         dealType.getSelectionModel().selectFirst();
+        // 交易摘要选择器初始化
+        dealAmount.getItems().addAll(SingValueTools.getTradeAmount());
+        dealAmount.converterProperty().set(new TransactionAmountChoiceBox());
+        //默认选中第一个选项
+        dealAmount.getSelectionModel().selectFirst();
         // 设置开始时间
         tradeDate.setValue(LocalDate.now());
         tradeDate.setConverter(new DateConverter());
@@ -79,7 +81,6 @@ public class DeclareViewController implements Initializable {
         tradeDate.setConverter(converter);
         // 构造第0行
         addSummaryLineHandleAction();
-        summaryText.setTextFormatter(InputFormatter.stringLengthFormatte());
     }
 
     /**
@@ -185,7 +186,7 @@ public class DeclareViewController implements Initializable {
                 dealType.getSelectionModel().selectFirst();
                 // 设置开始时间
                 tradeDate.setValue(LocalDate.now());
-                summaryText.setText(null);
+                dealAmount.getSelectionModel().selectFirst();
                 summaryInfoVbox.getChildren().clear();
                 // 构造第0行
                 addSummaryLineHandleAction();
@@ -212,12 +213,12 @@ public class DeclareViewController implements Initializable {
                 return para;
             }
             para.put("tradeType",_dealType);
-            String _summaryTextText = summaryText.getText();
-            if (StringUtils.isBlank(_summaryTextText.trim())){
+            Integer _dealAmount = dealAmount.getSelectionModel().getSelectedItem().getId();
+            if (-1 == _dealAmount){
                 para.put("err","请填写摘要");
                 return para;
             }
-            para.put("transactionAmount",_summaryTextText);
+            para.put("transactionAmount",_dealAmount);
             JSONArray array = new JSONArray();
             for (int index = 0;index < children.size();index++){
                 node = (HBox)children.get(index);

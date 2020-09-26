@@ -2,6 +2,7 @@ package ac.cn.saya.lab.control;
 
 import ac.cn.saya.lab.api.RequestUrl;
 import ac.cn.saya.lab.controller.TransactionViewController;
+import ac.cn.saya.lab.entity.TransactionAmountEntity;
 import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
 import ac.cn.saya.lab.tools.*;
@@ -48,7 +49,7 @@ public class EditTransactionControl implements Initializable {
      * 交易摘要
      */
     @FXML
-    public TextField summaryText;
+    private ChoiceBox<TransactionAmountEntity> dealAmount;
 
     /**
      * 交易时间
@@ -89,7 +90,7 @@ public class EditTransactionControl implements Initializable {
         // 数据回显
         dealType.getSelectionModel().select(_line.getTradeTypeEntity());
         tradeDate.setValue(LocalDate.parse(_line.getTradeDate(),DateUtils.dateFormat));
-        summaryText.setText(_line.getTransactionAmount());
+        dealAmount.getSelectionModel().select(_line.getTradeAmountEntity());
         _root.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
@@ -106,10 +107,12 @@ public class EditTransactionControl implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 页面选择器初始化
+        // 交易方式选择器初始化
         dealType.getItems().addAll(SingValueTools.getDealType());
         dealType.converterProperty().set(new TransactionTypeChoiceBox());
-        summaryText.setTextFormatter(InputFormatter.stringLengthFormatte());
+        // 交易摘要选择器初始化
+        dealAmount.getItems().addAll(SingValueTools.getTradeAmount());
+        dealAmount.converterProperty().set(new TransactionAmountChoiceBox());
         // 设置开始时间
         tradeDate.setValue(LocalDate.now());
         tradeDate.setConverter(new DateConverter());
@@ -137,8 +140,8 @@ public class EditTransactionControl implements Initializable {
             errorLabel.setText("请选择交易方式");
             return;
         }
-        String summary = summaryText.getText();
-        if (StringUtils.isBlank(summary) || (summary = summary.trim()).length() <0){
+        Integer _dealAmount = dealAmount.getSelectionModel().getSelectedItem().getId();
+        if (-1 == _dealAmount){
             errorLabel.setText("请填写摘要");
             return;
         }
@@ -146,7 +149,7 @@ public class EditTransactionControl implements Initializable {
         para.put("tradeId",_line.getTradeId());
         para.put("tradeType",_dealType);
         para.put("tradeDate",tradeDate.getValue().format(DateUtils.dateFormat));
-        para.put("transactionAmount",summary);
+        para.put("transactionAmount",_dealAmount);
         Result<Object> requestResult = RequestUrl.updateTransaction(para);
         if (ResultUtil.checkSuccess(requestResult)) {
             // 关闭当前页面

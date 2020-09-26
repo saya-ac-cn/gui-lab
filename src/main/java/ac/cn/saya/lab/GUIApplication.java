@@ -36,18 +36,18 @@ public class GUIApplication extends Application {
     /**
      * 当前舞台
      */
-    private Stage stage;
+    private static Stage stage;
 
     /**
      * 当前
      */
-    private Scene scene;
+    private static Scene scene;
 
     /**
      * 定义偏移量，用于处理窗口移动
      */
-    private double xOffset = 0;
-    private double yOffset = 0;
+    private static double xOffset = 0;
+    private static double yOffset = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -132,14 +132,14 @@ public class GUIApplication extends Application {
     /**
      *	获取scene
      */
-    public Scene getScene() {
+    public static Scene getScene() {
         return scene;
     }
 
     /**
      *	获取Stage
      */
-    public Stage getStage() {
+    public static Stage getStage() {
         return stage;
     }
 

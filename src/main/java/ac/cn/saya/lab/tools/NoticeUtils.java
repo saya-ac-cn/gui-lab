@@ -11,6 +11,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -133,9 +135,45 @@ public class NoticeUtils {
 
         Scene scene = new Scene(pane);
         stage.setScene(scene);
+
+
         // 设置背景透明
         scene.setFill(Paint.valueOf("rgba(241,250,250,0.65)"));
         stage.show();
+    }
+
+    public static Stage loading(Stage parent, String message) {
+        Stage stage = new Stage();
+        stage.initOwner(GUIApplication.getStage());
+        // style
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        // message
+        Label adLbl = new Label(message);
+        adLbl.setTextFill(Color.BLUE);
+
+
+        // pack
+        VBox vBox = new VBox();
+        vBox.setSpacing(10);
+        vBox.setBackground(Background.EMPTY);
+        vBox.getChildren().add(adLbl);
+
+        // scene
+        Scene scene = new Scene(vBox);
+        scene.setFill(null);
+        stage.setScene(scene);
+        stage.setWidth(message.length() * 8 + 10);
+        stage.setHeight(100);
+
+        // show center of parent
+        double x = parent.getX() + (parent.getWidth() - stage.getWidth()) / 2;
+        double y = parent.getY() + (parent.getHeight() - stage.getHeight()) / 2;
+        stage.setX(x);
+        stage.setY(y);
+        return stage;
     }
 
 }

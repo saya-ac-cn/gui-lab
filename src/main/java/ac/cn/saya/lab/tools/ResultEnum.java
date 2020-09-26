@@ -5,6 +5,7 @@ package ac.cn.saya.lab.tools;
  */
 public enum ResultEnum {
 
+    TIME_OUT(-9, "请求超时"),
     DB_ERROR(-8, "数据库读写失败"),
     NOT_CHECKING(-7, "未登录"),
     NOT_PARAMETER(-6, "缺少参数"),
@@ -15,9 +16,9 @@ public enum ResultEnum {
     UNKONW_ERROR(-1, "未知错误"),
     SUCCESS(0, "处理成功");
 
-    private int code;
+    private final int code;
 
-    private String msg;
+    private final String msg;
 
     ResultEnum(int code, String msg) {
         this.code = code;

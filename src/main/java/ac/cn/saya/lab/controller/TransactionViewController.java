@@ -5,6 +5,7 @@ import ac.cn.saya.lab.api.RequestUrl;
 import ac.cn.saya.lab.assemb.AdvisorPagingAndDate;
 import ac.cn.saya.lab.control.EditTransactionControl;
 import ac.cn.saya.lab.control.EditTransactionInfoControl;
+import ac.cn.saya.lab.control.ProgressFrom;
 import ac.cn.saya.lab.entity.TransactionListEntity;
 import ac.cn.saya.lab.entity.TransactionTypeEntity;
 import ac.cn.saya.lab.tools.*;
@@ -133,7 +134,10 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
             return new SimpleStringProperty(cell.getValue().getTradeTypeEntity().getTransactionType());
         });
         currencyNumber.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, Double>("currencyNumber"));
-        transactionAmount.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, String>("transactionAmount"));
+        /// transactionAmount.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, String>("transactionAmount"));
+        transactionAmount.setCellValueFactory((cell) -> {
+            return new SimpleStringProperty(cell.getValue().getTradeAmountEntity().getTag());
+        });
         tradeDate.setCellValueFactory(new PropertyValueFactory<TransactionListEntity, String>("tradeDate"));
         operateCol.setCellFactory((col) -> {
             TableCell<TransactionListEntity, String> cell = new TableCell<TransactionListEntity, String>() {
@@ -209,24 +213,38 @@ public class TransactionViewController extends AdvisorPagingAndDate implements I
         }
         queryCondition.put("pageSize", 10);
         // 请求数据查询
-        Result<Object> requestResult = RequestUrl.getTransactionList(queryCondition);
-        if (ResultUtil.checkSuccess(requestResult)) {
-            // 请求成功
-            JSONObject requestData = (JSONObject) requestResult.getData();
-            JSONArray grid = (JSONArray) requestData.getOrDefault("grid", null);
-            List<TransactionListEntity> gridList = JSONObject.parseArray(grid.toJSONString(), TransactionListEntity.class);
-            data.clear();
-            data.addAll(gridList);
-            dataTableView.setItems(data);
-            // 请求成功后更新当前页码 和 总页数
-            pageIndex = requestData.getInteger("pageNow");
-            pageCount = requestData.getInteger("totalPage");
-            displayTable(true);
-        } else {
-            data.clear();
-            dataTableView.setItems(data);
-            displayTable(false);
-        }
+        AsyncRequestUtils task = new AsyncRequestUtils(queryCondition, (parmar) -> RequestUrl.getTransactionList(parmar));
+        task.valueProperty().addListener((observable,oldValue,newValue)->{
+            if (task.getFinishStatus()){
+                // 执行完成
+                Result<Object> result = null;
+                try {
+                    result = task.get();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                if (ResultUtil.checkSuccess(result)) {
+                    // 请求成功
+                    JSONObject requestData = (JSONObject) result.getData();
+                    JSONArray grid = (JSONArray) requestData.getOrDefault("grid", null);
+                    List<TransactionListEntity> gridList = JSONObject.parseArray(grid.toJSONString(), TransactionListEntity.class);
+                    data.clear();
+                    data.addAll(gridList);
+                    dataTableView.setItems(data);
+                    // 请求成功后更新当前页码 和 总页数
+                    pageIndex = requestData.getInteger("pageNow");
+                    pageCount = requestData.getInteger("totalPage");
+                    displayTable(true);
+                } else {
+                    data.clear();
+                    dataTableView.setItems(data);
+                    displayTable(false);
+                    NoticeUtils.show("错误",result.getMsg());
+                }
+            }
+        });
+        ProgressFrom progressFrom = new ProgressFrom(task,GUIApplication.getStage());
+        progressFrom.activateProgressBar();
     }
 
     /**
