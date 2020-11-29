@@ -624,16 +624,18 @@ public class HttpRequestUtils {
     private static String getResult(HttpRequestBase httpRequest, Integer timeOut, boolean isStream, HttpClientContext clientContext) {
         // 响应结果
         StringBuilder sb = null;
-        CloseableHttpResponse response = null;
-        try {
-            // 获取连接客户端
-            CloseableHttpClient httpClient = getHttpClient(timeOut);
-            // 发起请求
-            if (null != clientContext) {
-                response = httpClient.execute(httpRequest, clientContext);
-            } else {
-                response = httpClient.execute(httpRequest);
-            }
+        //CloseableHttpResponse response = null;
+        // 获取连接客户端
+        CloseableHttpClient httpClient = getHttpClient(timeOut);
+        try( // 发起请求
+             CloseableHttpResponse response = (null != clientContext)?(httpClient.execute(httpRequest, clientContext)):httpClient.execute(httpRequest);
+        ) {
+            // 发起请求(使用try with resource 关闭资源代替try catch finally，只要资源集成实现Closeable即可)
+            /// if (null != clientContext) {
+            ///     response = httpClient.execute(httpRequest, clientContext);
+            /// } else {
+            ///     response = httpClient.execute(httpRequest);
+            /// }
             int respCode = response.getStatusLine().getStatusCode();
             // 如果是重定向
             if (302 == respCode) {
@@ -666,6 +668,7 @@ public class HttpRequestUtils {
                     }
                 }
             }
+            response.close();
             return sb == null ? RESULT : ("".equals(sb.toString().trim()) ? "-1" : sb.toString());
         } catch (ConnectionPoolTimeoutException e) {
             /// System.err.println("从连接池获取连接超时!!!");
@@ -737,15 +740,6 @@ public class HttpRequestUtils {
             });
             e.printStackTrace();
             return "{\"code\":-5010,\"msg\":\"接口请求错误\"}";
-        } finally {
-            if (null != response) {
-                try {
-                    response.close();
-                } catch (IOException e) {
-                    System.err.println("关闭响应连接出错");
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
