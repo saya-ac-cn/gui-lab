@@ -35,8 +35,6 @@ import java.util.ResourceBundle;
 
 public class HomeViewController implements Initializable {
 
-    private GUIApplication mainApp;
-
     /**
      * 用户登录成功后，保存的数据
      */
@@ -101,12 +99,6 @@ public class HomeViewController implements Initializable {
      */
     private String thisPane;
 
-    /**
-     * 获取主控制器的引用
-     */
-    public void setMainApp(GUIApplication mainApp) {
-        this.mainApp = mainApp;
-    }
 
     /**
      * 初始化界面用户信息

@@ -90,7 +90,6 @@ public class GUIApplication extends Application {
         try {
             HomeViewController controller = (HomeViewController)replaceSceneContent("page/home.fxml",true);
             controller.setUserData(data);
-            controller.setMainApp(this);
         }catch(Exception e) {
             e.printStackTrace();
         }
