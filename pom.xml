@@ -6,7 +6,7 @@
 
     <groupId>ac.cn.saya</groupId>
     <artifactId>gui-lab</artifactId>
-    <description> find ./ -type f -name ".DS_Store" -exec rm -rf {} \;</description>
+    <description>个人财政申报系统-桌面版</description>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -16,18 +16,20 @@
         <java.version>1.8</java.version>
         <skipTests>true</skipTests>
         <project.build.directory>gui-lab</project.build.directory>
+        <httpclient.version>4.5.10</httpclient.version>
+        <fastjson.version>1.2.68</fastjson.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.10</version>
+            <version>${httpclient.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.68</version>
+            <version>${fastjson.version}</version>
         </dependency>
     </dependencies>
 
