@@ -39,7 +39,7 @@ public class RequestUrl {
      */
     public static Result<Object> login(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/login/swing", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/login/swing", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class RequestUrl {
      */
     public static Result<Object> getTransactionList(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transaction", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transaction", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -68,7 +68,7 @@ public class RequestUrl {
      */
     public static Result<Object> getTransactionType(){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionType", null, null, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionType", null, null, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,7 +82,7 @@ public class RequestUrl {
      */
     public static Result<Object> getTransactionAmount(){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionAmount", null, null, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionAmount", null, null, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,17 +92,19 @@ public class RequestUrl {
 
     /**
      * 导出流水
-     * @param parmar
-     * @param savePath
+     * @param parmars
      * @return
      */
-    public static boolean downTransaction(JSONObject parmar,String savePath){
+    public static Result<Object> downTransaction(JSONObject parmars){
         try {
-            return HttpRequestUtils.httpDownload(prefixUrh+"/backend/api/financial/outTransactionListExcel", null, parmar,savePath, 60000, false, HttpRequestUtils.getClientContext());
+            boolean result = HttpRequestUtils.httpDownload(prefixUrh + "/backend/api/financial/outTransactionListExcel", null, parmars.getJSONObject("parmar"), parmars.getString("savePath"), 20000, false, HttpRequestUtils.getClientContext());
+            if (result){
+                return ResultUtil.success();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return ResultUtil.error(ResultEnum.ERROP);
     }
 
     /**
@@ -112,7 +114,7 @@ public class RequestUrl {
      */
     public static Result<Object> totalTransactionForDay(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/totalTransactionForDay", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/totalTransactionForDay", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,17 +124,19 @@ public class RequestUrl {
 
     /**
      * 导出按天统计的报表
-     * @param parmar
-     * @param savePath
+     * @param parmars
      * @return
      */
-    public static boolean downTransactionForDayExcel(JSONObject parmar,String savePath){
+    public static Result<Object> downTransactionForDayExcel(JSONObject parmars){
         try {
-            return HttpRequestUtils.httpDownload(prefixUrh+"/backend/api/financial/outTransactionForDayExcel", null, parmar,savePath, 60000, false, HttpRequestUtils.getClientContext());
+            boolean result = HttpRequestUtils.httpDownload(prefixUrh+"/backend/api/financial/outTransactionForDayExcel", null, parmars.getJSONObject("parmar"), parmars.getString("savePath"), 20000, false, HttpRequestUtils.getClientContext());
+            if (result){
+                return ResultUtil.success();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return ResultUtil.error(ResultEnum.ERROP);
     }
 
     /**
@@ -142,7 +146,7 @@ public class RequestUrl {
      */
     public static Result<Object> totalTransactionForMonth(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/totalTransactionForMonth", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/totalTransactionForMonth", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,16 +156,19 @@ public class RequestUrl {
 
     /**
      * 导出按月统计的报表
-     * @param savePath
+     * @param parmars
      * @return
      */
-    public static boolean outTransactionForMonthExcel(String savePath){
+    public static Result<Object> outTransactionForMonthExcel(JSONObject parmars){
         try {
-            return HttpRequestUtils.httpDownload(prefixUrh+"/backend/api/financial/outTransactionForMonthExcel", null, null,savePath, 60000, false, HttpRequestUtils.getClientContext());
+            boolean result = HttpRequestUtils.httpDownload(prefixUrh+"/backend/api/financial/outTransactionForMonthExcel", null, null,parmars.getString("savePath"), 20000, false, HttpRequestUtils.getClientContext());
+            if (result){
+                return ResultUtil.success();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return ResultUtil.error(ResultEnum.ERROP);
     }
 
     /**
@@ -171,7 +178,7 @@ public class RequestUrl {
      */
     public static Result<Object> totalTransactionForYear(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/totalTransactionForYear", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/totalTransactionForYear", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -181,16 +188,19 @@ public class RequestUrl {
 
     /**
      * 导出按年统计的报表
-     * @param savePath
+     * @param parmars
      * @return
      */
-    public static boolean outTransactionForYearExcel(String savePath){
+    public static Result<Object> outTransactionForYearExcel(JSONObject parmars){
         try {
-            return HttpRequestUtils.httpDownload(prefixUrh+"/backend/api/financial/outTransactionForYearExcel", null, null,savePath, 60000, false, HttpRequestUtils.getClientContext());
+            boolean result = HttpRequestUtils.httpDownload(prefixUrh+"/backend/api/financial/outTransactionForYearExcel", null, null,parmars.getString("savePath"), 20000, false, HttpRequestUtils.getClientContext());
+            if (result){
+                return ResultUtil.success();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return ResultUtil.error(ResultEnum.ERROP);
     }
 
     /**
@@ -200,7 +210,7 @@ public class RequestUrl {
      */
     public static Result<Object> applyTransaction(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/api/financial/insertTransaction", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/api/financial/insertTransaction", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -216,7 +226,7 @@ public class RequestUrl {
      */
     public static Result<Object> updateTransaction(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpPut(prefixUrh+"/backend/api/financial/updateTransaction", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpPut(prefixUrh+"/backend/api/financial/updateTransaction", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -231,7 +241,7 @@ public class RequestUrl {
      */
     public static Result<Object> deleteTransaction(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpDelete(prefixUrh+"/backend/api/financial/deleteTransaction", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpDelete(prefixUrh+"/backend/api/financial/deleteTransaction", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -246,7 +256,7 @@ public class RequestUrl {
      */
     public static Result<Object> getTransactionInfo(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionInfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/financial/transactionInfo", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -261,7 +271,7 @@ public class RequestUrl {
      */
     public static Result<Object> insertTransactioninfo(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/api/financial/insertTransactioninfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpPost(prefixUrh+"/backend/api/financial/insertTransactioninfo", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -276,7 +286,7 @@ public class RequestUrl {
      */
     public static Result<Object> updateTransactioninfo(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpPut(prefixUrh+"/backend/api/financial/updateTransactioninfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpPut(prefixUrh+"/backend/api/financial/updateTransactioninfo", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -291,7 +301,7 @@ public class RequestUrl {
      */
     public static Result<Object> deleteTransactioninfo(JSONObject parmar){
         try {
-            String resultStr = HttpRequestUtils.httpDelete(prefixUrh+"/backend/api/financial/deleteTransactioninfo", null, parmar, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpDelete(prefixUrh+"/backend/api/financial/deleteTransactioninfo", null, parmar, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
@@ -305,7 +315,7 @@ public class RequestUrl {
      */
     public static Result<Object> getDoshBoard(){
         try {
-            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/set/dashBoard", null, null, 60000, false, HttpRequestUtils.getClientContext());
+            String resultStr = HttpRequestUtils.httpGet(prefixUrh+"/backend/api/set/dashBoard", null, null, 20000, false, HttpRequestUtils.getClientContext());
             return JSON.parseObject(resultStr, Result.class);
         } catch (Exception e) {
             e.printStackTrace();
