@@ -143,9 +143,4 @@ public class GUIApplication extends Application {
         return stage;
     }
 
-    public static void main(String[] args) {
-        // 调用Application进行显示
-        launch(args);
-    }
-
 }

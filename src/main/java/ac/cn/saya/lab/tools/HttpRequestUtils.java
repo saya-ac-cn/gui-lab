@@ -450,18 +450,19 @@ public class HttpRequestUtils {
                 httpGet.addHeader(entry.getKey(), entry.getValue().toString());
             }
         }
-        CloseableHttpResponse response = null;
         InputStream is = null;
         FileOutputStream fileOut = null;
         // 获取连接客户端
         CloseableHttpClient httpClient = getHttpClient(timeOut);
-        try {
-            // 发起请求
-            if (null != clientContext) {
-                response = httpClient.execute(httpGet, clientContext);
-            } else {
-                response = httpClient.execute(httpGet);
-            }
+        try(
+                CloseableHttpResponse response = (null != clientContext)?httpClient.execute(httpGet, clientContext):httpClient.execute(httpGet);
+                ) {
+            /// 发起请求
+            ///if (null != clientContext) {
+            ///    response = httpClient.execute(httpGet, clientContext);
+            ///} else {
+            ///    response = httpClient.execute(httpGet);
+            ///}
             // 获取状态码
             int respCode = response.getStatusLine().getStatusCode();
             if (200 == respCode){
@@ -481,6 +482,7 @@ public class HttpRequestUtils {
                 fileOut.flush();
                 result = true;
             }
+            response.close();
         } catch (IOException e) {
             result = false;
             e.printStackTrace();
